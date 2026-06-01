@@ -8,9 +8,8 @@ export async function login(formData: FormData): Promise<void> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  const cookieStore = await cookies();
 
-  const supabase = createClient(cookieStore);
+  const supabase = await createClient();
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -29,11 +28,15 @@ export async function login(formData: FormData): Promise<void> {
     throw new Error("User not found");
   }
 
+  console.log("check user", user);
+
   const { data: admin } = await supabase
     .from("admins")
     .select("*")
     .eq("id", user.id)
     .single();
+
+  console.log("admin", admin)
 
   if (admin) {
     redirect("/asgard/dashboard");
