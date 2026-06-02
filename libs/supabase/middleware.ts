@@ -1,5 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
@@ -62,6 +62,15 @@ export async function updateSession(request: NextRequest) {
   // ------------------------
   // PROTECTED ASGARD ROUTES
   // ------------------------
+
+  if(pathname === "/asgard"){
+    if(!user){
+      return NextResponse.redirect(new URL("/asgard/login", request.url));
+    }else {
+      return NextResponse.redirect(new URL("/asgard/dashboard", request.url));
+    }
+  }
+
   if (pathname.startsWith("/asgard")) {
     if (!user) {
       return NextResponse.redirect(

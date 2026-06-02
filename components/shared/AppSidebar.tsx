@@ -53,6 +53,10 @@ const items = [
         url: "/asgard/academics/batches"
       },
       {
+        title: "Batch Regions",
+        url: "/asgard/academics/batch-regions"
+      },
+      {
         title: "Courses",
         url: "/asgard/academics/courses"
       }

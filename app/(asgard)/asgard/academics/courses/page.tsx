@@ -1,24 +1,18 @@
-import CourseContainer from '@/containers/asgard/academics/CourseContainer'
-import React from 'react'
 import { getCourses } from './actions';
+import CourseContainer from '@/containers/asgard/academics/CourseContainer';
+import React from 'react';
 
-
-type Props = {
-  searchParams: Promise<{
-    page?: string;
-  }>;
-};
-
-export default async function Page({
+const CoursesPage = async ({
   searchParams,
-}: Props) {
-  const params = await searchParams;
+}: {
+  searchParams: { page?: string };
+}) => {
+  const page = Number(searchParams.page) || 1;
+  const result = await getCourses(page, 10);
 
-  const currentPage = Number(params.page ?? "1");
-
-  const result = await getCourses(currentPage);
   return (
     <CourseContainer result={result} />
-  )
-}
+  );
+};
 
+export default CoursesPage;

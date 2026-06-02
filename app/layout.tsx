@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Footer from "@/components/ui/Footer";
 import AOSProvider from "@/components/shared/AOSProvider";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,14 @@ export default function RootLayout({
     >
       <body className="min-h-full">
         {children}
+
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+          }}
+        />
       </body>
-    </html>
+    </html >
   );
 }
