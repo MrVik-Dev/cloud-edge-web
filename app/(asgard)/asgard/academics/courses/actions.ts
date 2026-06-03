@@ -205,3 +205,26 @@ export async function deleteCourse(id: string) {
   revalidatePath("/asgard/academics/courses");
   return { success: true };
 }
+
+export async function getFeaturedCourses() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("courses")
+    .select(`
+      *,
+      batches (
+        *,
+        batch_regions (
+          *
+        )
+      )
+    `)
+    .eq("is_active", true)
+    .eq("is_deleted", false)
+    .eq("is_featured", true);
+
+  if (error) throw new Error(error.message);
+
+  return data || [];
+}

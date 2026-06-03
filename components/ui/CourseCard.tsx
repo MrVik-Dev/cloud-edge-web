@@ -3,7 +3,7 @@ import Image, { StaticImageData } from 'next/image'
 import SecondaryButton from './SecondaryButton'
 
 interface CourseCardProps {
-  icon: StaticImageData
+  icon: string | StaticImageData
   category: string
   categoryColor: string
   title: string
@@ -35,7 +35,9 @@ const CourseCard = ({
         <Image
           src={icon}
           alt={title}
-          className='w-[52px] h-[52px]'
+          width={52}
+          height={52}
+          className='w-[52px] h-[52px] object-contain'
         />
 
         <span
@@ -49,19 +51,19 @@ const CourseCard = ({
       </div>
 
       <div className='pr-5 space-y-3'>
-        <h3 className='font-semibold text-xl tracking-tight'>
+        <h3 className='font-semibold text-xl tracking-tight line-clamp-1'>
           {title}
         </h3>
 
-        <h4 className='text-[#5A5B62]'>
+        <h4 className='text-[#5A5B62] line-clamp-3 min-h-[72px]'>
           {description}
         </h4>
 
         <div className='flex items-center justify-between mt-7'>
           <div>
-            <div className='text-sm text-[#938F9F] line-through'>
+            {/* <div className='text-sm text-[#938F9F] line-through'>
               {oldPrice}
-            </div>
+            </div> */}
 
             <div className='text-primary font-bold text-3xl'>
               {price}
@@ -75,4 +77,4 @@ const CourseCard = ({
   )
 }
 
-export default CourseCard
+export default CourseCard;

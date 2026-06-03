@@ -1,7 +1,7 @@
 "use client";
 
 import BadgeLabel from '@/components/shared/BadgeLabel'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import checkIcon from "@/public/icons/check.svg"
 import Image from 'next/image'
 import SecondaryButton from '@/components/ui/SecondaryButton'
@@ -13,10 +13,11 @@ import marketingIcon from "@/public/icons/marketing.svg"
 import awsIcon from "@/public/icons/aws.svg"
 import sapIcon from "@/public/icons/sap.svg"
 import javaIcon from "@/public/icons/java.svg"
+import { getFeaturedCourses } from '@/app/(asgard)/asgard/academics/courses/actions'
 
-const courses = [
+const staticCourses = [
   {
-    id: 1,
+    id: "static-1",
     icon: salesforceIcon,
     category: "Salesforce",
     categoryColor: "#0165E0",
@@ -40,7 +41,7 @@ const courses = [
   },
 
   {
-    id: 2,
+    id: "static-2",
     icon: codeIcon,
     category: "Development",
     categoryColor: "#7535D4",
@@ -64,7 +65,7 @@ const courses = [
   },
 
   {
-    id: 3,
+    id: "static-3",
     icon: salesforceIcon,
     category: "Salesforce",
     categoryColor: "#0165E0",
@@ -88,7 +89,7 @@ const courses = [
   },
 
   {
-    id: 4,
+    id: "static-4",
     icon: marketingIcon,
     category: "Marketing",
     categoryColor: "#F3663B",
@@ -112,7 +113,7 @@ const courses = [
   },
 
   {
-    id: 5,
+    id: "static-5",
     icon: awsIcon,
     category: "DEVELOPMENT",
     categoryColor: "#FB9701",
@@ -136,7 +137,7 @@ const courses = [
   },
 
   {
-    id: 6,
+    id: "static-6",
     icon: sapIcon,
     category: "SAP",
     categoryColor: "#00B1EB",
@@ -160,7 +161,7 @@ const courses = [
   },
 
   {
-    id: 7,
+    id: "static-7",
     icon: javaIcon,
     category: "DEVELOPMENT",
     categoryColor: "#EA2D2E",
@@ -183,9 +184,209 @@ const courses = [
     ],
   },
 ]
-const ExploreCoursesSection = () => {
 
-  const [selectedCourse, setSelectedCourse] = useState(courses[0])
+// HELPER FUNCTIONS FOR DYNAMIC DATA MAP
+const getNearestBatch = (course: any) => {
+  if (typeof course.id === 'string' && course.id.startsWith('static-')) {
+    // Mock batch 10 days in the future for static demo courses
+    const tenDaysFromNow = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString();
+    return {
+      start_date: tenDaysFromNow,
+      country_code: "IN",
+      currency: "INR",
+      price: 9900
+    };
+  }
+
+  if (!course.batches || course.batches.length === 0) return null;
+
+  let nearestBatchRegion: any = null;
+  let nearestDiff = Infinity;
+  const now = new Date().getTime();
+
+  course.batches.forEach((batch: any) => {
+    if (batch.is_deleted || batch.is_active === false) return;
+    batch.batch_regions?.forEach((region: any) => {
+      // Find India (IN) next upcoming batch
+      if (region.is_deleted || region.is_active === false || !region.start_date || region.country_code !== "IN") return;
+      const startDateMs = new Date(region.start_date).getTime();
+      const diff = startDateMs - now;
+      if (diff > 0 && diff < nearestDiff) {
+        nearestDiff = diff;
+        nearestBatchRegion = region;
+      }
+    });
+  });
+
+  return nearestBatchRegion;
+};
+
+const getCourseIcon = (course: any) => {
+  if (course.icon_media_url) return course.icon_media_url;
+  if (course.icon) return course.icon;
+
+  const label = (course.label || "").toLowerCase();
+  const name = (course.name || "").toLowerCase();
+
+  if (name.includes("salesforce") || label.includes("salesforce")) return salesforceIcon;
+  if (name.includes("aws") || name.includes("cloud") || label.includes("cloud")) return awsIcon;
+  if (name.includes("marketing") || label.includes("marketing")) return marketingIcon;
+  if (name.includes("sap") || label.includes("sap")) return sapIcon;
+  if (name.includes("java") || label.includes("java")) return javaIcon;
+
+  return codeIcon;
+};
+
+const getCourseCategory = (course: any) => {
+  return course.label || course.category || "Development";
+};
+
+const getCourseCategoryColor = (course: any) => {
+  if (course.categoryColor) return course.categoryColor;
+  const cat = getCourseCategory(course).toLowerCase();
+  if (cat.includes("salesforce")) return "#0165E0";
+  if (cat.includes("marketing")) return "#F3663B";
+  if (cat.includes("aws") || cat.includes("cloud")) return "#FB9701";
+  if (cat.includes("sap")) return "#00B1EB";
+  if (cat.includes("java")) return "#EA2D2E";
+  return "#7535D4";
+};
+
+const getCourseTitle = (course: any) => {
+  return course.name || course.title;
+};
+
+const getCourseFeatures = (course: any) => {
+  if (course.features && course.features.length > 0) return course.features;
+  return [
+    "Beginner to Advanced",
+    "Real Projects Included",
+    "Certification Provided",
+    "Job Assistance",
+  ];
+};
+
+const getCourseTags = (course: any) => {
+  if (course.tags && course.tags.length > 0) return course.tags;
+  if (course.badges && course.badges.length > 0) return course.badges;
+  return [
+    "⏳ Limited Seats Available",
+    "🏅 Industry Certified Program",
+  ];
+};
+
+const getCoursePrice = (course: any) => {
+  if (course.price !== undefined) {
+    return { price: course.price, oldPrice: course.oldPrice };
+  }
+
+  const nearestRegion = getNearestBatch(course);
+  if (nearestRegion) {
+    const currencySymbol = nearestRegion.currency === "INR" ? "₹" : nearestRegion.currency === "GBP" ? "£" : "$";
+    return {
+      price: `${currencySymbol}${nearestRegion.price.toLocaleString()}`,
+      oldPrice: `${currencySymbol}${Math.round(nearestRegion.price * 1.2)}`
+    };
+  }
+
+  if (course.batches) {
+    for (const batch of course.batches) {
+      if (batch.batch_regions) {
+        for (const region of batch.batch_regions) {
+          if (region.price) {
+            const currencySymbol = region.currency === "INR" ? "₹" : region.currency === "GBP" ? "£" : "$";
+            return {
+              price: `${currencySymbol}${region.price}`,
+              oldPrice: `${currencySymbol}${Math.round(region.price * 1.2)}`
+            };
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    price: "$99.00",
+    oldPrice: "$120.00"
+  };
+};
+
+const ExploreCoursesSection = () => {
+  const [coursesList, setCoursesList] = useState<any[]>(staticCourses);
+  const [selectedCourse, setSelectedCourse] = useState<any>(staticCourses[0]);
+  const [timeLeft, setTimeLeft] = useState({
+    days: "00",
+    hours: "00",
+    minutes: "00",
+    seconds: "00",
+    batchDateText: "To Be Announced",
+  });
+
+  useEffect(() => {
+    getFeaturedCourses()
+      .then((data) => {
+        if (data && data.length > 0) {
+          console.log("data", data)
+          setCoursesList(data);
+          setSelectedCourse(data[0]);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load featured courses", err);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!selectedCourse) return;
+    const nearest = getNearestBatch(selectedCourse);
+    if (!nearest || !nearest.start_date) {
+      setTimeLeft({
+        days: "00",
+        hours: "00",
+        minutes: "00",
+        seconds: "00",
+        batchDateText: "To Be Announced",
+      });
+      return;
+    }
+
+    const startDate = new Date(nearest.start_date);
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
+    const dateText = startDate.toLocaleDateString('en-US', options);
+
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const difference = startDate.getTime() - now;
+
+      if (difference <= 0) {
+        setTimeLeft({
+          days: "00",
+          hours: "00",
+          minutes: "00",
+          seconds: "00",
+          batchDateText: `Next Batch: ${dateText}`,
+        });
+        return;
+      }
+
+      const d = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((difference % (1000 * 60)) / 1000);
+
+      setTimeLeft({
+        days: d.toString().padStart(2, '0'),
+        hours: h.toString().padStart(2, '0'),
+        minutes: m.toString().padStart(2, '0'),
+        seconds: s.toString().padStart(2, '0'),
+        batchDateText: `Next Batch: ${dateText}`,
+      });
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [selectedCourse]);
 
   return (
     <div className='bg-white py-10 relative overflow-hidden'>
@@ -228,29 +429,31 @@ const ExploreCoursesSection = () => {
               {/* TOP */}
               <div className='flex items-start justify-between gap-4'>
                 <Image
-                  src={selectedCourse.icon}
-                  alt={selectedCourse.title}
-                  className='w-[60px] h-[60px] sm:w-[76px] sm:h-[76px]'
+                  src={getCourseIcon(selectedCourse)}
+                  alt={getCourseTitle(selectedCourse)}
+                  width={76}
+                  height={76}
+                  className='w-[60px] h-[60px] sm:w-[76px] sm:h-[76px] object-contain'
                 />
 
                 <span className='bg-[#FFFFFF33] py-1 px-3 backdrop-blur-sm text-white uppercase rounded-[100px] text-[10px] sm:text-xs font-bold whitespace-nowrap'>
-                  {selectedCourse.category}
+                  {getCourseCategory(selectedCourse)}
                 </span>
               </div>
 
               {/* TITLE */}
               <div className='font-semibold text-2xl sm:text-3xl text-white leading-tight'>
-                {selectedCourse.title}
+                {getCourseTitle(selectedCourse)}
               </div>
 
               {/* DESC */}
-              <div className='text-white text-base sm:text-lg leading-6 tracking-wide'>
+              <div className='text-white text-base sm:text-lg leading-6 tracking-wide line-clamp-3'>
                 {selectedCourse.description}
               </div>
 
               {/* FEATURES */}
               <div className='space-y-2'>
-                {selectedCourse.features.map((item) => (
+                {getCourseFeatures(selectedCourse).map((item: string) => (
                   <div key={item} className='flex items-center gap-3'>
 
                     <Image
@@ -270,7 +473,7 @@ const ExploreCoursesSection = () => {
               {/* BADGES */}
               <div className='flex flex-wrap items-center gap-3 sm:gap-4'>
 
-                {selectedCourse.badges.map((badge) => (
+                {getCourseTags(selectedCourse).map((badge: string) => (
 
                   <div
                     key={badge}
@@ -303,85 +506,87 @@ const ExploreCoursesSection = () => {
               </div>
 
               {/* TIMER BOX */}
-              <div>
-
-                <div
-                  className="text-white w-full backdrop-blur-sm rounded-3xl p-5 sm:p-7 border border-transparent bg-[#FFFFFF0D] text-sm"
-                  style={{
-                    backgroundClip: "padding-box",
-                    position: "relative",
-                  }}
-                >
+              {getNearestBatch(selectedCourse) && (
+                <div>
 
                   <div
-                    className="absolute inset-0 rounded-3xl pointer-events-none"
+                    className="text-white w-full backdrop-blur-sm rounded-3xl p-5 sm:p-7 border border-transparent bg-[#FFFFFF0D] text-sm"
                     style={{
-                      padding: "0.61px",
-                      background:
-                        "linear-gradient(109.31deg, #FFFFFF 2.19%, rgba(255,255,255,0) 96.74%)",
-                      WebkitMask:
-                        "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                      WebkitMaskComposite: "xor",
-                      maskComposite: "exclude",
+                      backgroundClip: "padding-box",
+                      position: "relative",
                     }}
-                  />
+                  >
 
-                  <div className='mb-4 text-sm sm:text-base'>
-                    📅 Next Batch: 25th April
-                  </div>
+                    <div
+                      className="absolute inset-0 rounded-3xl pointer-events-none"
+                      style={{
+                        padding: "0.61px",
+                        background:
+                          "linear-gradient(109.31deg, #FFFFFF 2.19%, rgba(255,255,255,0) 96.74%)",
+                        WebkitMask:
+                          "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                        WebkitMaskComposite: "xor",
+                        maskComposite: "exclude",
+                      }}
+                    />
 
-                  <div className='grid grid-cols-4 gap-2 sm:gap-4'>
+                    <div className='mb-4 text-sm sm:text-base'>
+                      📅 {timeLeft.batchDateText}
+                    </div>
 
-                    {[
-                      { value: "08", label: "Days" },
-                      { value: "13", label: "Hours" },
-                      { value: "16", label: "Mins" },
-                      { value: "00", label: "Secs" },
-                    ].map((item) => (
+                    <div className='grid grid-cols-4 gap-2 sm:gap-4'>
 
-                      <div
-                        key={item.label}
-                        className="text-white w-full backdrop-blur-sm rounded px-2 sm:px-5 py-2 border border-transparent bg-[#FFFFFF0D] text-[10px] sm:text-sm"
-                        style={{
-                          backgroundClip: "padding-box",
-                          position: "relative",
-                        }}
-                      >
+                      {[
+                        { value: timeLeft.days, label: "Days" },
+                        { value: timeLeft.hours, label: "Hours" },
+                        { value: timeLeft.minutes, label: "Mins" },
+                        { value: timeLeft.seconds, label: "Secs" },
+                      ].map((item) => (
 
                         <div
-                          className="absolute inset-0 rounded pointer-events-none"
+                          key={item.label}
+                          className="text-white w-full backdrop-blur-sm rounded px-2 sm:px-5 py-2 border border-transparent bg-[#FFFFFF0D] text-[10px] sm:text-sm"
                           style={{
-                            padding: "0.61px",
-                            background:
-                              "linear-gradient(109.31deg, #FFFFFF 2.19%, rgba(255,255,255,0) 96.74%)",
-                            WebkitMask:
-                              "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                            WebkitMaskComposite: "xor",
-                            maskComposite: "exclude",
+                            backgroundClip: "padding-box",
+                            position: "relative",
                           }}
-                        />
+                        >
 
-                        <div className='space-y-1'>
+                          <div
+                            className="absolute inset-0 rounded pointer-events-none"
+                            style={{
+                              padding: "0.61px",
+                              background:
+                                "linear-gradient(109.31deg, #FFFFFF 2.19%, rgba(255,255,255,0) 96.74%)",
+                              WebkitMask:
+                                "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                              WebkitMaskComposite: "xor",
+                              maskComposite: "exclude",
+                            }}
+                          />
 
-                          <div className='font-bold text-sm sm:text-lg text-center'>
-                            {item.value}
-                          </div>
+                          <div className='space-y-1'>
 
-                          <div className='uppercase text-center text-[9px] sm:text-sm leading-none'>
-                            {item.label}
+                            <div className='font-bold text-sm sm:text-lg text-center'>
+                              {item.value}
+                            </div>
+
+                            <div className='uppercase text-center text-[9px] sm:text-sm leading-none'>
+                              {item.label}
+                            </div>
+
                           </div>
 
                         </div>
 
-                      </div>
+                      ))}
 
-                    ))}
+                    </div>
 
                   </div>
 
                 </div>
-
-              </div>
+              )}
 
             </div>
 
@@ -394,12 +599,12 @@ const ExploreCoursesSection = () => {
 
                 <div>
 
-                  <div className='text-sm text-[#938F9F] line-through'>
-                    {selectedCourse.oldPrice}
-                  </div>
+                  {/* <div className='text-sm text-[#938F9F] line-through'>
+                    {getCoursePrice(selectedCourse).oldPrice}
+                  </div> */}
 
                   <div className='text-white font-bold text-3xl'>
-                    {selectedCourse.price}
+                    {getCoursePrice(selectedCourse).price}
                   </div>
 
                 </div>
@@ -415,7 +620,7 @@ const ExploreCoursesSection = () => {
           {/* RIGHT SIDE */}
           <div className='lg:col-span-7 lg:col-start-6 flex flex-col gap-6 lg:gap-7'>
 
-            {courses
+            {coursesList
               .filter((course) => course.id !== selectedCourse.id)
               .slice(0, 3)
               .map((course) => (
@@ -427,13 +632,13 @@ const ExploreCoursesSection = () => {
                 >
 
                   <CourseCard
-                    icon={course.icon}
-                    category={course.category}
-                    categoryColor={course.categoryColor}
-                    title={course.title}
-                    description={course.description}
-                    oldPrice={course.oldPrice}
-                    price={course.price}
+                    icon={getCourseIcon(course)}
+                    category={getCourseCategory(course)}
+                    categoryColor={getCourseCategoryColor(course)}
+                    title={getCourseTitle(course)}
+                    description={course.description || ""}
+                    oldPrice={getCoursePrice(course).oldPrice}
+                    price={getCoursePrice(course).price}
                   />
 
                 </div>
@@ -445,7 +650,7 @@ const ExploreCoursesSection = () => {
           {/* BOTTOM CARDS */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:col-span-12'>
 
-            {courses
+            {coursesList
               .filter((course) => course.id !== selectedCourse.id)
               .slice(3)
               .map((course) => (
@@ -457,13 +662,13 @@ const ExploreCoursesSection = () => {
                 >
 
                   <CourseCard
-                    icon={course.icon}
-                    category={course.category}
-                    categoryColor={course.categoryColor}
-                    title={course.title}
-                    description={course.description}
-                    oldPrice={course.oldPrice}
-                    price={course.price}
+                    icon={getCourseIcon(course)}
+                    category={getCourseCategory(course)}
+                    categoryColor={getCourseCategoryColor(course)}
+                    title={getCourseTitle(course)}
+                    description={course.description || ""}
+                    oldPrice={getCoursePrice(course).oldPrice}
+                    price={getCoursePrice(course).price}
                   />
 
                 </div>
