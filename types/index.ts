@@ -24,6 +24,7 @@ export interface ICourse {
   duration?: number;
   outcomes?: string[];
   features?: string[];
+  tags?: string[];
   in_avg_salary?: string;
   uk_avg_salary?: string;
   us_avg_salary?: string;

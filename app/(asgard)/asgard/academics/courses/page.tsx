@@ -7,7 +7,7 @@ const CoursesPage = async ({
 }: {
   searchParams: { page?: string };
 }) => {
-  const page = Number(searchParams.page) || 1;
+  const page = Number(searchParams?.page) || 1;
   const result = await getCourses(page, 10);
 
   return (

@@ -48,6 +48,7 @@ const CreateUpdateCourseContainer: React.FC<ICreateUpdateCourseContainerProps> =
   // For dynamic list fields in Course
   const [features, setFeatures] = useState<string[]>(data?.features?.length ? data.features : [""]);
   const [outcomes, setOutcomes] = useState<string[]>(data?.outcomes?.length ? data.outcomes : [""]);
+  const [tags, setTags] = useState<string[]>(data?.tags?.length ? data.tags : [""]);
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -74,6 +75,7 @@ const CreateUpdateCourseContainer: React.FC<ICreateUpdateCourseContainerProps> =
         ...form,
         features: features.filter(f => f.trim() !== ""),
         outcomes: outcomes.filter(o => o.trim() !== ""),
+        tags: tags.filter(t => t.trim() !== ""),
         modules: modules.map(m => ({ ...m, points: m.points.filter(p => p.trim() !== "") })),
         tools,
         highlights,
@@ -206,8 +208,8 @@ const CreateUpdateCourseContainer: React.FC<ICreateUpdateCourseContainerProps> =
 
         {/* Arrays info */}
         <div className="rounded-2xl border bg-card p-6 shadow-sm">
-          <h2 className="mb-5 text-lg font-semibold">Features & Outcomes</h2>
-          <div className="grid gap-8 lg:grid-cols-2">
+          <h2 className="mb-5 text-lg font-semibold">Features, Outcomes & Tags</h2>
+          <div className="grid gap-8 lg:grid-cols-3">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label>Features</Label>
@@ -241,6 +243,24 @@ const CreateUpdateCourseContainer: React.FC<ICreateUpdateCourseContainerProps> =
                   </div>
                 ))}
                 {outcomes.length === 0 && <p className="text-sm text-muted-foreground text-center py-4 border rounded-lg border-dashed">No outcomes added</p>}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Tags</Label>
+                <Button type="button" variant="outline" size="sm" onClick={() => handleAddStringArrayItem(setTags, tags)}>
+                  <Plus className="h-4 w-4 mr-2" /> Add
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {tags.map((t, i) => (
+                  <div key={i} className="flex gap-2">
+                    <Input value={t} onChange={(e) => handleStringArrayChange(setTags, tags, i, e.target.value)} placeholder={`Tag ${i + 1}`} />
+                    <Button type="button" variant="ghost" size="icon" onClick={() => handleRemoveStringArrayItem(setTags, tags, i)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  </div>
+                ))}
+                {tags.length === 0 && <p className="text-sm text-muted-foreground text-center py-4 border rounded-lg border-dashed">No tags added</p>}
               </div>
             </div>
           </div>
