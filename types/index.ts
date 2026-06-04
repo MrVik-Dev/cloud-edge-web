@@ -33,6 +33,9 @@ export interface ICourse {
   is_active?: boolean;
   created_at?: Date;
   is_deleted?: boolean;
+  url_slug?: string;
+
+  nextBatch?: IBatches;
 }
 
 export interface ICourseModule {
@@ -79,4 +82,4 @@ export interface IBatchRegion {
   is_deleted?: boolean;
   created_at?: string;
   batches?: IBatches;
-}
+}

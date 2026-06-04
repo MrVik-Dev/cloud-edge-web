@@ -39,6 +39,7 @@ const CreateUpdateCourseContainer: React.FC<ICreateUpdateCourseContainerProps> =
     ca_avg_salary: data?.ca_avg_salary ?? "",
     is_active: data?.is_active ?? true,
     is_featured: data?.is_featured ?? false,
+    url_slug: data?.url_slug ?? ""
   });
 
   const [modules, setModules] = useState<ICourseModule[]>(data?.modules ?? []);
@@ -189,6 +190,15 @@ const CreateUpdateCourseContainer: React.FC<ICreateUpdateCourseContainerProps> =
                   <Input className="h-11" type="number" value={form.duration} onChange={(e) => setForm({ ...form, duration: Number(e.target.value) })} />
                 </div>
               </div>
+              {
+                data && (
+                  <div className="space-y-2">
+                    <Label>Url Slug</Label>
+                    <Input className="h-11" placeholder="Url Slug" value={form.url_slug} onChange={(e) => setForm({ ...form, url_slug: e.target.value })} />
+                  </div>
+                )
+              }
+
             </div>
             <div className="space-y-2">
               <Label>Media / Thumbnail</Label>

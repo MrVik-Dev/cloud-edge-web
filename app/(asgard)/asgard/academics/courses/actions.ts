@@ -2,6 +2,7 @@
 
 import { createClient } from "@/libs/supabase/server";
 import { ICourse, ICourseModule, ICourseTool, ICourseHighlight, ICourseFAQ } from "@/types";
+import { createSlug } from "@/utils";
 import { revalidatePath } from "next/cache";
 
 export async function getCourses(page = 1, pageSize = 10) {
@@ -54,6 +55,92 @@ export async function getCourseById(id: string) {
   };
 }
 
+export async function getCourseBySlug(slug: string) {
+  const supabase = await createClient();
+
+  const { data: course, error: courseError } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("url_slug", slug)
+    .eq("is_deleted", false)
+    .single();
+
+  if (courseError) throw new Error(courseError.message);
+
+  const courseId = course.id;
+
+  const [
+    modulesRes,
+    toolsRes,
+    highlightsRes,
+    faqsRes,
+    batchesRes,
+  ] = await Promise.all([
+    supabase
+      .from("course_modules")
+      .select("*")
+      .eq("course_id", courseId)
+      .order("display_order"),
+
+    supabase
+      .from("course_tools")
+      .select("*")
+      .eq("course_id", courseId)
+      .order("display_order"),
+
+    supabase
+      .from("course_highlights")
+      .select("*")
+      .eq("course_id", courseId)
+      .order("display_order"),
+
+    supabase
+      .from("course_faqs")
+      .select("*")
+      .eq("course_id", courseId)
+      .order("display_order"),
+
+    supabase
+      .from("batches")
+      .select(`
+        *,
+        batch_regions (*)
+      `)
+      .eq("course_id", courseId)
+      .eq("is_active", true)
+      .eq("is_deleted", false),
+  ]);
+
+  const nextBatchRegion = batchesRes.data
+    ?.flatMap(batch =>
+      (batch.batch_regions || []).map((region: any) => ({
+        ...region,
+        batch,
+      }))
+    )
+    .filter(
+      region =>
+        region.is_active &&
+        !region.is_deleted &&
+        region.start_date &&
+        new Date(region.start_date) >= new Date()
+    )
+    .sort(
+      (a, b) =>
+        new Date(a.start_date).getTime() -
+        new Date(b.start_date).getTime()
+    )[0];
+
+  return {
+    ...course,
+    modules: modulesRes.data || [],
+    tools: toolsRes.data || [],
+    highlights: highlightsRes.data || [],
+    faqs: faqsRes.data || [],
+    nextBatch: nextBatchRegion,
+  };
+}
+
 export async function createCourse(
   payload: ICourse & {
     modules: ICourseModule[];
@@ -84,6 +171,7 @@ export async function createCourse(
       us_avg_salary: courseData.us_avg_salary,
       ca_avg_salary: courseData.ca_avg_salary,
       is_active: courseData.is_active,
+      url_slug: createSlug(courseData.name)
     })
     .select()
     .single();
@@ -152,6 +240,7 @@ export async function updateCourse(
       us_avg_salary: courseData.us_avg_salary,
       ca_avg_salary: courseData.ca_avg_salary,
       is_active: courseData.is_active,
+      url_slug: courseData.url_slug
     })
     .eq("id", id);
 

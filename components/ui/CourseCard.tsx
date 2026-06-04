@@ -10,7 +10,8 @@ interface CourseCardProps {
   description: string
   oldPrice: string
   price: string
-  buttonText?: string
+  buttonText?: string;
+  url: string;
 }
 
 const CourseCard = ({
@@ -21,6 +22,7 @@ const CourseCard = ({
   description,
   oldPrice,
   price,
+  url,
   buttonText = "Enroll Now",
 }: CourseCardProps) => {
   return (
@@ -70,7 +72,7 @@ const CourseCard = ({
             </div>
           </div>
 
-          <SecondaryButton text={buttonText} />
+          <SecondaryButton text={buttonText} href={url} />
         </div>
       </div>
     </div>

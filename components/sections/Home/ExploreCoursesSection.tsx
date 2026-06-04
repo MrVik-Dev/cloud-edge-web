@@ -609,7 +609,7 @@ const ExploreCoursesSection = () => {
 
                 </div>
 
-                <SecondaryButton text='Enroll Now' />
+                <SecondaryButton text='Enroll Now' href={`/courses/${selectedCourse.url_slug}`} />
 
               </div>
 
@@ -639,6 +639,7 @@ const ExploreCoursesSection = () => {
                     description={course.description || ""}
                     oldPrice={getCoursePrice(course).oldPrice}
                     price={getCoursePrice(course).price}
+                    url={`/courses/${course.url_slug}`}
                   />
 
                 </div>
@@ -669,6 +670,7 @@ const ExploreCoursesSection = () => {
                     description={course.description || ""}
                     oldPrice={getCoursePrice(course).oldPrice}
                     price={getCoursePrice(course).price}
+                    url={`/courses/${course.url_slug}`}
                   />
 
                 </div>
