@@ -37,6 +37,9 @@ export interface ICourse {
   is_deleted?: boolean;
   url_slug?: string;
 
+  highlights: ICourseHighlight[];
+  tools: ICourseTool[];
+
   nextBatch?: IBatches;
   batches?: IBatches[]; 
   modules?: ICourseModule[];

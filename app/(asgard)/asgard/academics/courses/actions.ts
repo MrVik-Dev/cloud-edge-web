@@ -131,6 +131,36 @@ export async function getCourseBySlug(slug: string) {
         new Date(b.start_date).getTime()
     )[0];
 
+
+  const countryPricing = {
+    IN: null,
+    UK: null,
+    US: null,
+    CA: null,
+  };
+
+  (batchesRes.data || []).forEach((batch) => {
+    (batch.batch_regions || []).forEach((region: any) => {
+      const code = region.country_code?.toUpperCase();
+
+      if (["IN", "INDIA"].includes(code)) {
+        countryPricing.IN = region;
+      }
+
+      if (["UK", "GB", "GBR"].includes(code)) {
+        countryPricing.UK = region;
+      }
+
+      if (["US", "USA"].includes(code)) {
+        countryPricing.US = region;
+      }
+
+      if (["CA", "CAN"].includes(code)) {
+        countryPricing.CA = region;
+      }
+    });
+  });
+
   return {
     ...course,
     modules: modulesRes.data || [],
@@ -139,6 +169,7 @@ export async function getCourseBySlug(slug: string) {
     faqs: faqsRes.data || [],
     nextBatch: nextBatchRegion,
     batches: batchesRes.data || [],
+    countryPricing,
   };
 }
 

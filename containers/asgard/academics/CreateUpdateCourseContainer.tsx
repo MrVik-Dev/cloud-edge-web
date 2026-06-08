@@ -39,7 +39,14 @@ const CreateUpdateCourseContainer: React.FC<ICreateUpdateCourseContainerProps> =
     ca_avg_salary: data?.ca_avg_salary ?? "",
     is_active: data?.is_active ?? true,
     is_featured: data?.is_featured ?? false,
-    url_slug: data?.url_slug ?? ""
+    url_slug: data?.url_slug ?? "",
+
+    highlights: data?.highlights ?? [],
+    tools: data?.tools ?? [],
+
+    nextBatch: data?.nextBatch,
+    batches: data?.batches ?? [],
+    modules: data?.modules ?? [],
   });
 
   const [modules, setModules] = useState<ICourseModule[]>(data?.modules ?? []);
