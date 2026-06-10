@@ -11,7 +11,7 @@ import {
   LogOut,
   ChevronRight,
   MonitorCog,
-  BookOpenText,
+  BookOpenText, Newspaper,
 } from "lucide-react";
 
 import {
@@ -61,6 +61,11 @@ const items = [
         url: "/asgard/academics/courses"
       }
     ]
+  },
+  {
+    title: "Blogs",
+    icon: Newspaper,
+    url: "/asgard/blogs",
   }
 ];
 

@@ -114,3 +114,21 @@ export interface IBatchRegion {
   created_at?: string;
   batches?: IBatches;
 }
+
+export  interface  IBlogs {
+  id?: string
+  title?: string
+  description?: string
+  url_slug?: string
+  media_url?: string
+  tags?: string[]
+  created_at?: Date
+}
+
+export  interface  IResponse {
+  data: any[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}

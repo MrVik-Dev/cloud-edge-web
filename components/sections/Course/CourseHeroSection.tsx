@@ -19,7 +19,7 @@ interface ICourseHeroSectionProps {
 
 const CourseHeroSection: React.FC<ICourseHeroSectionProps> = ({ course }) => {
   return (
-<div
+      <div
   className="min-h-[900px] pb-12 md:pb-0"
       style={{
         background:

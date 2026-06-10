@@ -62,7 +62,7 @@ const CourseCtaSection = () => {
             <Image
               src={cta}
               alt="Rocket Illustration"
-              className="w-[220px] md:w-[300px]"
+              className="w-[200px] md:w-[280px]"
               priority
             />
           </div>

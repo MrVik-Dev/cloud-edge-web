@@ -186,39 +186,57 @@ const staticCourses = [
 ]
 
 // HELPER FUNCTIONS FOR DYNAMIC DATA MAP
+// export const getNearestBatch = (course: any) => {
+//   if (typeof course.id === 'string' && course.id.startsWith('static-')) {
+//     // Mock batch 10 days in the future for static demo courses
+//     const tenDaysFromNow = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString();
+//     return {
+//       start_date: tenDaysFromNow,
+//       country_code: "IN",
+//       currency: "INR",
+//       price: 9900
+//     };
+//   }
+//
+//   if (!course.batches || course.batches.length === 0) return null;
+//
+//   let nearestBatchRegion: any = null;
+//   let nearestDiff = Infinity;
+//   const now = new Date().getTime();
+//
+//   course.batches.forEach((batch: any) => {
+//     if (batch.is_deleted || batch.is_active === false) return;
+//     batch.batch_regions?.forEach((region: any) => {
+//       // Find India (IN) next upcoming batch
+//       if (region.is_deleted || region.is_active === false || !region.start_date || region.country_code !== "IN") return;
+//       const startDateMs = new Date(region.start_date).getTime();
+//       const diff = startDateMs - now;
+//       if (diff > 0 && diff < nearestDiff) {
+//         nearestDiff = diff;
+//         nearestBatchRegion = region;
+//       }
+//     });
+//   });
+//
+//   return nearestBatchRegion;
+// };
+
+
 export const getNearestBatch = (course: any) => {
-  if (typeof course.id === 'string' && course.id.startsWith('static-')) {
-    // Mock batch 10 days in the future for static demo courses
-    const tenDaysFromNow = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString();
-    return {
-      start_date: tenDaysFromNow,
-      country_code: "IN",
-      currency: "INR",
-      price: 9900
-    };
-  }
+  if (!course?.batches?.length) return null;
 
-  if (!course.batches || course.batches.length === 0) return null;
-
-  let nearestBatchRegion: any = null;
-  let nearestDiff = Infinity;
-  const now = new Date().getTime();
-
-  course.batches.forEach((batch: any) => {
-    if (batch.is_deleted || batch.is_active === false) return;
-    batch.batch_regions?.forEach((region: any) => {
-      // Find India (IN) next upcoming batch
-      if (region.is_deleted || region.is_active === false || !region.start_date || region.country_code !== "IN") return;
-      const startDateMs = new Date(region.start_date).getTime();
-      const diff = startDateMs - now;
-      if (diff > 0 && diff < nearestDiff) {
-        nearestDiff = diff;
-        nearestBatchRegion = region;
-      }
-    });
-  });
-
-  return nearestBatchRegion;
+  return course.batches
+      .flatMap((batch: any) => batch.batch_regions || [])
+      .filter(
+          (region: any) =>
+              region.is_active &&
+              !region.is_deleted
+      )
+      .sort(
+          (a: any, b: any) =>
+              new Date(a.start_date).getTime() -
+              new Date(b.start_date).getTime()
+      )[0] || null;
 };
 
 const getCourseIcon = (course: any) => {
@@ -275,7 +293,7 @@ const getCourseTags = (course: any) => {
   ];
 };
 
-const getCoursePrice = (course: any) => {
+export  const getCoursePrice = (course: any) => {
   if (course.price !== undefined) {
     return { price: course.price, oldPrice: course.oldPrice };
   }

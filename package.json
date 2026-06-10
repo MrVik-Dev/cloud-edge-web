@@ -11,6 +11,7 @@
   "dependencies": {
     "@ascendtis/react-a-form": "^0.1.4",
     "@base-ui/react": "^1.5.0",
+    "@hugerte/hugerte-react": "^2.0.2",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.2",
     "@tanstack/react-table": "^8.21.3",
