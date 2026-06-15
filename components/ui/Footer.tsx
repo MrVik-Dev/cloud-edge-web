@@ -143,7 +143,7 @@ const Footer = () => {
                     { label: "Courses", href: "/courses" },
                     { label: "Services", href: "/services" },
                     { label: "Blog", href: "/blog" },
-                    { label: "Contact", href: "/contact" },
+                    { label: "Contact", href: "/contact-us" },
                   ].map((item) => {
                     const isActive = pathname === item.href;
 
