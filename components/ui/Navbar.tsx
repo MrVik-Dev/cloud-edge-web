@@ -10,8 +10,10 @@ import MobileNavbar from "./MobileNavbar";
 
 const navItems = [
   { label: "Home", href: "/" },
-  { label: "Courses", href: "/courses", hasDropdown: true },
-  { label: "Services", href: "#services", hasDropdown: true },
+  { label: "Courses", href: "/courses", },
+  {label: "About", href: "/about-us", },
+  {label: "Contact", href: "/contact-us", },
+  // { label: "Services", href: "#services", hasDropdown: true },
   { label: "Blogs", href: "/blogs", hasDropdown: false },
 ];
 
