@@ -1,4 +1,4 @@
-"use clinent"
+"use client"
 
 import ContactUsSection from '@/components/sections/Home/ContactUsSection'
 import CtaSection from '@/components/sections/Home/CtaSection'

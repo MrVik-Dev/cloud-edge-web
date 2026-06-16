@@ -51,6 +51,7 @@ export const metadata: Metadata = {
 };
 
 const page = () => {
+
   return (
     <HomeContainer />
   )
