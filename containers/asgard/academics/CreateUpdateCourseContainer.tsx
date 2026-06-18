@@ -188,7 +188,7 @@ const CreateUpdateCourseContainer: React.FC<ICreateUpdateCourseContainerProps> =
   };
   const removeFaq = (index: number) => setFaqs(faqs.filter((_, i) => i !== index));
 
-  const addTestimonial = () => setTestimonials([...testimonials, { course_id: "", person_name: "", person_designation: "", review_text: "", media_url: "" }]);
+  const addTestimonial = () => setTestimonials([...testimonials, { course_id: "", person_name: "", person_designation: "", review_text: "", media_url: "", is_featured: false, }]);
   const updateTestimonial = (index: number, field: string, value: any) => {
     const updated = [...testimonials];
     updated[index] = { ...updated[index], [field]: value };
@@ -514,6 +514,18 @@ const CreateUpdateCourseContainer: React.FC<ICreateUpdateCourseContainerProps> =
                   <div className="space-y-2 col-span-2">
                     <Label>Review Text</Label>
                     <Textarea className="min-h-[80px]" value={t.review_text || ""} onChange={e => updateTestimonial(i, "review_text", e.target.value)} placeholder="e.g. Great course!" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Featured Testimonial</Label>
+
+                    <div className="h-10 flex items-center">
+                      <Switch
+                          checked={t.is_featured ?? false}
+                          onCheckedChange={(checked) =>
+                              updateTestimonial(i, "is_featured", checked)
+                          }
+                      />
+                    </div>
                   </div>
                 </div>
                 <Button type="button" variant="destructive" size="icon" className="rounded-full shrink-0 mt-8" onClick={() => removeTestimonial(i)}><Trash2 className="w-4 h-4" /></Button>

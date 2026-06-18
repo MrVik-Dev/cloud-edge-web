@@ -526,3 +526,40 @@ export async function getFeaturedCourses() {
 
     return data || [];
 }
+
+
+export async function getFeaturedTestimonials() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+      .from("course_testimonials")
+      .select("*")
+      .eq("is_featured", true);
+
+  if (error) throw new Error(error.message);
+
+  return data || [];
+}
+
+export async function getRandomTestimonials(limit = 6) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+      .from("course_testimonials")
+      .select(`
+            *,
+            courses!inner (
+                id,
+                is_active,
+                is_deleted
+            )
+        `)
+      .eq("courses.is_active", true)
+      .eq("courses.is_deleted", false);
+
+  if (error) throw new Error(error.message);
+
+  const shuffled = [...(data || [])].sort(() => Math.random() - 0.5);
+
+  return shuffled.slice(0, limit);
+}

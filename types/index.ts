@@ -67,6 +67,7 @@ export interface ICourseTestimonial {
   is_deleted?: boolean;
   created_at?: Date;
   media_url?: string;
+  is_featured?: boolean;
 }
 
 export interface ICourseModule {
