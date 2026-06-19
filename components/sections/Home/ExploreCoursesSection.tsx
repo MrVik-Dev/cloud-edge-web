@@ -1,7 +1,7 @@
 "use client";
 
 import BadgeLabel from '@/components/shared/BadgeLabel'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import checkIcon from "@/public/icons/check.svg"
 import Image from 'next/image'
 import SecondaryButton from '@/components/ui/SecondaryButton'
@@ -26,20 +26,17 @@ const staticCourses = [
       "Master customisation, data management, automation, and expert platform navigation. The most in-demand Salesforce role.",
     oldPrice: "$120.00",
     price: "$99.00",
-
     features: [
       "Beginner to Advanced",
       "Real Projects Included",
       "Certification Provided",
       "Job Assistance",
     ],
-
     badges: [
       "⏳ Limited Seats Available",
       "🏅 Salesforce Certified Program",
     ],
   },
-
   {
     id: "static-2",
     icon: codeIcon,
@@ -50,20 +47,17 @@ const staticCourses = [
       "Advanced front-end and back-end development, modern frameworks, and real-world applications.",
     oldPrice: "$120.00",
     price: "$99.00",
-
     features: [
       "React + Next.js",
       "Backend APIs",
       "Database Projects",
       "Deployment Training",
     ],
-
     badges: [
       "🔥 Most Popular Course",
       "🚀 Real World Projects Included",
     ],
   },
-
   {
     id: "static-3",
     icon: salesforceIcon,
@@ -74,20 +68,17 @@ const staticCourses = [
       "Advanced Salesforce development with Apex, LWC, integrations, and enterprise-level implementations.",
     oldPrice: "$120.00",
     price: "$99.00",
-
     features: [
       "Apex + LWC",
       "Real CRM Projects",
       "Integration Training",
       "Career Guidance",
     ],
-
     badges: [
       "🏅 Salesforce Expert Track",
       "📈 High Salary Domain",
     ],
   },
-
   {
     id: "static-4",
     icon: marketingIcon,
@@ -98,20 +89,17 @@ const staticCourses = [
       "Advanced marketing strategies, performance campaigns, and data-driven techniques for business growth.",
     oldPrice: "$120.00",
     price: "$99.00",
-
     features: [
       "SEO + Meta Ads",
       "Google Ads",
       "Analytics Training",
       "Live Campaigns",
     ],
-
     badges: [
       "📊 Performance Marketing",
       "💼 Freelancing Ready",
     ],
   },
-
   {
     id: "static-5",
     icon: awsIcon,
@@ -122,20 +110,17 @@ const staticCourses = [
       "Comprehensive cloud training. Get certified and unlock high-paying cloud roles globally.",
     oldPrice: "$120.00",
     price: "$99.00",
-
     features: [
       "AWS Cloud Practitioner",
       "Hands-on Labs",
       "DevOps Basics",
       "Interview Preparation",
     ],
-
     badges: [
       "☁️ Cloud Career Ready",
       "🚀 High Demand Skills",
     ],
   },
-
   {
     id: "static-6",
     icon: sapIcon,
@@ -146,20 +131,17 @@ const staticCourses = [
       "FICO, SD, MM modules. Industry-recognised certification with full placement support.",
     oldPrice: "$120.00",
     price: "$99.00",
-
     features: [
       "SAP FICO",
       "SAP MM",
       "SAP SD",
       "Placement Assistance",
     ],
-
     badges: [
       "🏢 Enterprise Training",
       "📈 Corporate Ready",
     ],
   },
-
   {
     id: "static-7",
     icon: javaIcon,
@@ -170,14 +152,12 @@ const staticCourses = [
       "Frontend, backend, and database. Build robust full-stack apps with modern Java frameworks.",
     oldPrice: "$120.00",
     price: "$99.00",
-
     features: [
       "Spring Boot",
       "React Integration",
       "MySQL Database",
       "Industry Projects",
     ],
-
     badges: [
       "☕ Backend Mastery",
       "💼 Job Focused Program",
@@ -185,58 +165,21 @@ const staticCourses = [
   },
 ]
 
-// HELPER FUNCTIONS FOR DYNAMIC DATA MAP
-// export const getNearestBatch = (course: any) => {
-//   if (typeof course.id === 'string' && course.id.startsWith('static-')) {
-//     // Mock batch 10 days in the future for static demo courses
-//     const tenDaysFromNow = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString();
-//     return {
-//       start_date: tenDaysFromNow,
-//       country_code: "IN",
-//       currency: "INR",
-//       price: 9900
-//     };
-//   }
-//
-//   if (!course.batches || course.batches.length === 0) return null;
-//
-//   let nearestBatchRegion: any = null;
-//   let nearestDiff = Infinity;
-//   const now = new Date().getTime();
-//
-//   course.batches.forEach((batch: any) => {
-//     if (batch.is_deleted || batch.is_active === false) return;
-//     batch.batch_regions?.forEach((region: any) => {
-//       // Find India (IN) next upcoming batch
-//       if (region.is_deleted || region.is_active === false || !region.start_date || region.country_code !== "IN") return;
-//       const startDateMs = new Date(region.start_date).getTime();
-//       const diff = startDateMs - now;
-//       if (diff > 0 && diff < nearestDiff) {
-//         nearestDiff = diff;
-//         nearestBatchRegion = region;
-//       }
-//     });
-//   });
-//
-//   return nearestBatchRegion;
-// };
-
-
 export const getNearestBatch = (course: any) => {
   if (!course?.batches?.length) return null;
 
   return course.batches
-      .flatMap((batch: any) => batch.batch_regions || [])
-      .filter(
-          (region: any) =>
-              region.is_active &&
-              !region.is_deleted
-      )
-      .sort(
-          (a: any, b: any) =>
-              new Date(a.start_date).getTime() -
-              new Date(b.start_date).getTime()
-      )[0] || null;
+    .flatMap((batch: any) => batch.batch_regions || [])
+    .filter(
+      (region: any) =>
+        region.is_active &&
+        !region.is_deleted
+    )
+    .sort(
+      (a: any, b: any) =>
+        new Date(a.start_date).getTime() -
+        new Date(b.start_date).getTime()
+    )[0] || null;
 };
 
 const getCourseIcon = (course: any) => {
@@ -293,7 +236,7 @@ const getCourseTags = (course: any) => {
   ];
 };
 
-export  const getCoursePrice = (course: any) => {
+export const getCoursePrice = (course: any) => {
   if (course.price !== undefined) {
     return { price: course.price, oldPrice: course.oldPrice };
   }
@@ -329,9 +272,13 @@ export  const getCoursePrice = (course: any) => {
   };
 };
 
+const AUTO_ADVANCE_DURATION = 5000 // ms per course
+
 const ExploreCoursesSection = () => {
   const [coursesList, setCoursesList] = useState<any[]>(staticCourses);
-  const [selectedCourse, setSelectedCourse] = useState<any>(staticCourses[0]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [contentVisible, setContentVisible] = useState(true);
+  const [progress, setProgress] = useState(0);
   const [timeLeft, setTimeLeft] = useState({
     days: "00",
     hours: "00",
@@ -340,13 +287,19 @@ const ExploreCoursesSection = () => {
     batchDateText: "To Be Announced",
   });
 
+  const rafRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+
+  const selectedCourse = coursesList[selectedIndex] ?? coursesList[0];
+
+  // ── Load dynamic courses ──────────────────────────────────────────────────
   useEffect(() => {
     getFeaturedCourses()
       .then((data) => {
         if (data && data.length > 0) {
-          console.log("data", data)
+          console.log("data", data);
           setCoursesList(data);
-          setSelectedCourse(data[0]);
+          setSelectedIndex(0);
         }
       })
       .catch((err) => {
@@ -354,6 +307,7 @@ const ExploreCoursesSection = () => {
       });
   }, []);
 
+  // ── Batch countdown timer ─────────────────────────────────────────────────
   useEffect(() => {
     if (!selectedCourse) return;
     const nearest = getNearestBatch(selectedCourse);
@@ -377,13 +331,7 @@ const ExploreCoursesSection = () => {
       const difference = startDate.getTime() - now;
 
       if (difference <= 0) {
-        setTimeLeft({
-          days: "00",
-          hours: "00",
-          minutes: "00",
-          seconds: "00",
-          batchDateText: `Next Batch: ${dateText}`,
-        });
+        setTimeLeft({ days: "00", hours: "00", minutes: "00", seconds: "00", batchDateText: `Next Batch: ${dateText}` });
         return;
       }
 
@@ -406,19 +354,73 @@ const ExploreCoursesSection = () => {
     return () => clearInterval(interval);
   }, [selectedCourse]);
 
+  // ── Progress bar & auto-advance ───────────────────────────────────────────
+  const stopRaf = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
+
+  const startProgress = useCallback((fromPct = 0) => {
+    stopRaf();
+    const remaining = AUTO_ADVANCE_DURATION * (1 - fromPct / 100);
+    startTimeRef.current = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - (startTimeRef.current ?? now);
+      const pct = Math.min(fromPct + (elapsed / remaining) * (100 - fromPct), 100);
+      setProgress(pct);
+
+      if (pct < 100) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        // fade out → advance → fade in
+        setContentVisible(false);
+        setTimeout(() => {
+          setSelectedIndex((prev) => (prev + 1) % coursesList.length);
+          setProgress(0);
+          setContentVisible(true);
+        }, 280);
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  }, [stopRaf, coursesList.length]);
+
+  // restart progress bar whenever selected index changes
+  useEffect(() => {
+    setProgress(0);
+    startProgress(0);
+    return stopRaf;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedIndex, coursesList.length]);
+
+  // ── Manual card click ─────────────────────────────────────────────────────
+  const handleCardClick = (course: any) => {
+    const idx = coursesList.findIndex((c) => c.id === course.id);
+    if (idx === selectedIndex) return;
+
+    stopRaf();
+    setContentVisible(false);
+    setTimeout(() => {
+      setSelectedIndex(idx);
+      setProgress(0);
+      setContentVisible(true);
+    }, 280);
+  };
+
   return (
     <div className='bg-white py-10 relative overflow-hidden'>
 
-      <div className='absolute w-[411px] h-[390px] top-[50px] right-0 bg-[#6557E3] blur-[300px]' />
-
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[311px] h-[290px] bg-[#F232B2] blur-[300px]" />
+      <div className='absolute w-102.75 h-97.5 top-12.5 right-0 bg-[#6557E3] blur-[300px]' />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-77.75 h-72.5 bg-[#F232B2] blur-[300px]" />
 
       <div className='container mx-auto px-4 sm:px-6'>
 
         {/* HEADING */}
         <div className='flex items-center justify-center flex-col'>
           <BadgeLabel label='Top Class Courses' theme='light' />
-
           <div className='text-[#1D1F20] text-center font-medium leading-tight my-8 text-3xl sm:text-4xl md:text-5xl'>
             Explore Our World's Best Courses
           </div>
@@ -430,284 +432,275 @@ const ExploreCoursesSection = () => {
           {/* LEFT BIG CARD */}
           <div
             className='
-            bg-[#272040]
-            lg:col-span-5 lg:row-span-3
-            p-5 sm:p-7 lg:p-10
-            border border-[#4C4760]
-            rounded-3xl lg:rounded-4xl
-            flex flex-col justify-between
-            transition-all duration-300 ease-out
-            hover:-translate-y-1
-            hover:shadow-[0_20px_50px_rgba(0,0,0,0.25)]
-          '
+              bg-[#272040]
+              lg:col-span-5 lg:row-span-3
+              border border-[#4C4760]
+              rounded-3xl lg:rounded-4xl
+              flex flex-col justify-between
+              transition-all duration-300 ease-out
+              hover:-translate-y-1
+              hover:shadow-[0_24px_60px_rgba(101,87,227,0.30)]
+              group
+              overflow-hidden
+            '
+            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}
           >
 
-            <div className='space-y-6'>
+            {/* ── PROGRESS BAR ── */}
+            <div className='relative w-full h-0.75 bg-[#FFFFFF15] overflow-hidden shrink-0'>
+              <div
+                className='absolute left-0 top-0 h-full rounded-full'
+                style={{
+                  width: `${progress}%`,
+                  background: 'linear-gradient(90deg, #6557E3 0%, #F232B2 60%, #fff 100%)',
+                  boxShadow: '0 0 8px 2px rgba(242,50,178,0.5)',
+                  transition: 'none',
+                }}
+              />
+              {/* glowing head dot */}
+              <div
+                className='absolute top-1/2 -translate-y-1/2 w-1.75 h-1.75 rounded-full'
+                style={{
+                  left: `calc(${progress}% - 3.5px)`,
+                  background: '#fff',
+                  boxShadow: '0 0 6px 3px #F232B2',
+                  opacity: progress > 0 && progress < 100 ? 1 : 0,
+                  transition: 'opacity 0.2s',
+                }}
+              />
+            </div>
 
-              {/* TOP */}
-              <div className='flex items-start justify-between gap-4'>
-                <Image
-                  src={getCourseIcon(selectedCourse)}
-                  alt={getCourseTitle(selectedCourse)}
-                  width={76}
-                  height={76}
-                  className='w-[60px] h-[60px] sm:w-[76px] sm:h-[76px] object-contain'
-                />
+            {/* ── CARD CONTENT with fade/slide animation ── */}
+            <div
+              className='p-5 sm:p-7 lg:p-10 flex flex-col justify-between flex-1'
+              style={{
+                opacity: contentVisible ? 1 : 0,
+                transform: contentVisible ? 'translateY(0px)' : 'translateY(12px)',
+                transition: 'opacity 0.28s ease, transform 0.28s ease',
+              }}
+            >
 
-                <span className='bg-[#FFFFFF33] py-1 px-3 backdrop-blur-sm text-white uppercase rounded-[100px] text-[10px] sm:text-xs font-bold whitespace-nowrap'>
-                  {getCourseCategory(selectedCourse)}
-                </span>
-              </div>
+              <div className='space-y-6'>
 
-              {/* TITLE */}
-              <div className='font-semibold text-2xl sm:text-3xl text-white leading-tight'>
-                {getCourseTitle(selectedCourse)}
-              </div>
-
-              {/* DESC */}
-              <div className='text-white text-base sm:text-lg leading-6 tracking-wide line-clamp-3'>
-                {selectedCourse.description}
-              </div>
-
-              {/* FEATURES */}
-              <div className='space-y-2'>
-                {getCourseFeatures(selectedCourse).map((item: string) => (
-                  <div key={item} className='flex items-center gap-3'>
-
-                    <Image
-                      src={checkIcon}
-                      alt='check'
-                      className='w-10 h-10 sm:w-12 sm:h-12'
+                {/* TOP */}
+                <div className='flex items-start justify-between gap-4'>
+                  <div className='transition-transform duration-300 group-hover:scale-105' style={{ display: 'inline-flex' }}>
+                    <img
+                      src={
+                        typeof getCourseIcon(selectedCourse) === "string"
+                          ? getCourseIcon(selectedCourse)
+                          : getCourseIcon(selectedCourse).src
+                      }
+                      alt={getCourseTitle(selectedCourse)}
+                      width={76}
+                      height={76}
+                      className="w-15 h-15 sm:w-19 sm:h-19 object-contain"
                     />
-
-                    <span className='text-white text-base sm:text-lg tracking-tight'>
-                      {item}
-                    </span>
-
                   </div>
-                ))}
-              </div>
+                  <span className='bg-[#FFFFFF33] py-1 px-3 backdrop-blur-sm text-white uppercase rounded-[100px] text-[10px] sm:text-xs font-bold whitespace-nowrap'>
+                    {getCourseCategory(selectedCourse)}
+                  </span>
+                </div>
 
-              {/* BADGES */}
-              <div className='flex flex-wrap items-center gap-3 sm:gap-4'>
+                {/* TITLE */}
+                <div className='font-semibold text-2xl sm:text-3xl text-white leading-tight'>
+                  {getCourseTitle(selectedCourse)}
+                </div>
 
-                {getCourseTags(selectedCourse).map((badge: string) => (
+                {/* DESC */}
+                <div className='text-white text-base sm:text-lg leading-6 tracking-wide line-clamp-3'>
+                  {selectedCourse.description}
+                </div>
 
-                  <div
-                    key={badge}
-                    className="text-white w-fit backdrop-blur-sm rounded-3xl px-4 py-2 border border-transparent bg-[#FFFFFF0D] text-xs sm:text-sm"
-                    style={{
-                      backgroundClip: "padding-box",
-                      position: "relative",
-                    }}
-                  >
-
+                {/* FEATURES */}
+                <div className='space-y-2'>
+                  {getCourseFeatures(selectedCourse).map((item: string) => (
                     <div
-                      className="absolute inset-0 rounded-3xl pointer-events-none"
-                      style={{
-                        padding: "0.61px",
-                        background:
-                          "linear-gradient(109.31deg, #FFFFFF 2.19%, rgba(255,255,255,0) 96.74%)",
-                        WebkitMask:
-                          "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                        WebkitMaskComposite: "xor",
-                        maskComposite: "exclude",
-                      }}
-                    />
-
-                    {badge}
-
-                  </div>
-
-                ))}
-
-              </div>
-
-              {/* TIMER BOX */}
-              {getNearestBatch(selectedCourse) && (
-                <div>
-
-                  <div
-                    className="text-white w-full backdrop-blur-sm rounded-3xl p-5 sm:p-7 border border-transparent bg-[#FFFFFF0D] text-sm"
-                    style={{
-                      backgroundClip: "padding-box",
-                      position: "relative",
-                    }}
-                  >
-
-                    <div
-                      className="absolute inset-0 rounded-3xl pointer-events-none"
-                      style={{
-                        padding: "0.61px",
-                        background:
-                          "linear-gradient(109.31deg, #FFFFFF 2.19%, rgba(255,255,255,0) 96.74%)",
-                        WebkitMask:
-                          "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                        WebkitMaskComposite: "xor",
-                        maskComposite: "exclude",
-                      }}
-                    />
-
-                    <div className='mb-4 text-sm sm:text-base'>
-                      📅 {timeLeft.batchDateText}
+                      key={item}
+                      className='flex items-center gap-3 transition-all duration-200 hover:translate-x-1'
+                    >
+                      <Image src={checkIcon} alt='check' className='w-10 h-10 sm:w-12 sm:h-12' />
+                      <span className='text-white text-base sm:text-lg tracking-tight'>{item}</span>
                     </div>
+                  ))}
+                </div>
 
-                    <div className='grid grid-cols-4 gap-2 sm:gap-4'>
+                {/* BADGES */}
+                <div className='flex flex-wrap items-center gap-3 sm:gap-4'>
+                  {getCourseTags(selectedCourse).map((badge: string) => (
+                    <div
+                      key={badge}
+                      className="text-white w-fit backdrop-blur-sm rounded-3xl px-4 py-2 border border-transparent bg-[#FFFFFF0D] text-xs sm:text-sm transition-all duration-200 hover:bg-[#FFFFFF1A] hover:scale-105"
+                      style={{ backgroundClip: "padding-box", position: "relative" }}
+                    >
+                      <div
+                        className="absolute inset-0 rounded-3xl pointer-events-none"
+                        style={{
+                          padding: "0.61px",
+                          background: "linear-gradient(109.31deg, #FFFFFF 2.19%, rgba(255,255,255,0) 96.74%)",
+                          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                          WebkitMaskComposite: "xor",
+                          maskComposite: "exclude",
+                        }}
+                      />
+                      {badge}
+                    </div>
+                  ))}
+                </div>
 
-                      {[
-                        { value: timeLeft.days, label: "Days" },
-                        { value: timeLeft.hours, label: "Hours" },
-                        { value: timeLeft.minutes, label: "Mins" },
-                        { value: timeLeft.seconds, label: "Secs" },
-                      ].map((item) => (
-
-                        <div
-                          key={item.label}
-                          className="text-white w-full backdrop-blur-sm rounded px-2 sm:px-5 py-2 border border-transparent bg-[#FFFFFF0D] text-[10px] sm:text-sm"
-                          style={{
-                            backgroundClip: "padding-box",
-                            position: "relative",
-                          }}
-                        >
-
+                {/* TIMER BOX */}
+                {getNearestBatch(selectedCourse) && (
+                  <div>
+                    <div
+                      className="text-white w-full backdrop-blur-sm rounded-3xl p-5 sm:p-7 border border-transparent bg-[#FFFFFF0D] text-sm"
+                      style={{ backgroundClip: "padding-box", position: "relative" }}
+                    >
+                      <div
+                        className="absolute inset-0 rounded-3xl pointer-events-none"
+                        style={{
+                          padding: "0.61px",
+                          background: "linear-gradient(109.31deg, #FFFFFF 2.19%, rgba(255,255,255,0) 96.74%)",
+                          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                          WebkitMaskComposite: "xor",
+                          maskComposite: "exclude",
+                        }}
+                      />
+                      <div className='mb-4 text-sm sm:text-base'>
+                        📅 {timeLeft.batchDateText}
+                      </div>
+                      <div className='grid grid-cols-4 gap-2 sm:gap-4'>
+                        {[
+                          { value: timeLeft.days, label: "Days" },
+                          { value: timeLeft.hours, label: "Hours" },
+                          { value: timeLeft.minutes, label: "Mins" },
+                          { value: timeLeft.seconds, label: "Secs" },
+                        ].map((item) => (
                           <div
-                            className="absolute inset-0 rounded pointer-events-none"
-                            style={{
-                              padding: "0.61px",
-                              background:
-                                "linear-gradient(109.31deg, #FFFFFF 2.19%, rgba(255,255,255,0) 96.74%)",
-                              WebkitMask:
-                                "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                              WebkitMaskComposite: "xor",
-                              maskComposite: "exclude",
-                            }}
-                          />
-
-                          <div className='space-y-1'>
-
-                            <div className='font-bold text-sm sm:text-lg text-center'>
-                              {item.value}
+                            key={item.label}
+                            className="text-white w-full backdrop-blur-sm rounded px-2 sm:px-5 py-2 border border-transparent bg-[#FFFFFF0D] text-[10px] sm:text-sm transition-all duration-200 hover:bg-[#FFFFFF1A]"
+                            style={{ backgroundClip: "padding-box", position: "relative" }}
+                          >
+                            <div
+                              className="absolute inset-0 rounded pointer-events-none"
+                              style={{
+                                padding: "0.61px",
+                                background: "linear-gradient(109.31deg, #FFFFFF 2.19%, rgba(255,255,255,0) 96.74%)",
+                                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                                WebkitMaskComposite: "xor",
+                                maskComposite: "exclude",
+                              }}
+                            />
+                            <div className='space-y-1'>
+                              <div className='font-bold text-sm sm:text-lg text-center'>{item.value}</div>
+                              <div className='uppercase text-center text-[9px] sm:text-sm leading-none'>{item.label}</div>
                             </div>
-
-                            <div className='uppercase text-center text-[9px] sm:text-sm leading-none'>
-                              {item.label}
-                            </div>
-
                           </div>
-
-                        </div>
-
-                      ))}
-
+                        ))}
+                      </div>
                     </div>
-
                   </div>
-
-                </div>
-              )}
-
-            </div>
-
-            {/* FOOTER */}
-            <div className='w-full'>
-
-              <hr className='w-full border-t border-[#4C4760] mt-10 lg:mt-20 mb-7' />
-
-              <div className='flex flex-col sm:flex-row gap-5 sm:gap-0 sm:items-center sm:justify-between'>
-
-                <div>
-
-                  {/* <div className='text-sm text-[#938F9F] line-through'>
-                    {getCoursePrice(selectedCourse).oldPrice}
-                  </div> */}
-
-                  <div className='text-white font-bold text-3xl'>
-                    {getCoursePrice(selectedCourse).price}
-                  </div>
-
-                </div>
-
-                <SecondaryButton text='Enroll Now' href={`/courses/${selectedCourse.url_slug}`} />
+                )}
 
               </div>
 
-            </div>
+              {/* FOOTER */}
+              <div className='w-full'>
+                <hr className='w-full border-t border-[#4C4760] mt-10 lg:mt-20 mb-7' />
+                <div className='flex flex-col sm:flex-row gap-5 sm:gap-0 sm:items-center sm:justify-between'>
+                  <div>
+                    {/* <div className='text-sm text-[#938F9F] line-through'>
+                      {getCoursePrice(selectedCourse).oldPrice}
+                    </div> */}
+                    <div className='text-white font-bold text-3xl'>
+                      {getCoursePrice(selectedCourse).price}
+                    </div>
+                  </div>
+                  <SecondaryButton text='Enroll Now' href={`/courses/${selectedCourse.url_slug}`} />
+                </div>
+              </div>
 
+            </div>
           </div>
 
           {/* RIGHT SIDE */}
           <div className='lg:col-span-7 lg:col-start-6 flex flex-col gap-6 lg:gap-7'>
-
             {coursesList
               .filter((course) => course.id !== selectedCourse.id)
               .slice(0, 3)
-              .map((course) => (
-
-                <div
-                  key={course.id}
-                  onClick={() => setSelectedCourse(course)}
-                  className='cursor-pointer transition-all duration-300 hover:-translate-y-1'
-                >
-
-                  <CourseCard
-                    icon={getCourseIcon(course)}
-                    category={getCourseCategory(course)}
-                    categoryColor={getCourseCategoryColor(course)}
-                    title={getCourseTitle(course)}
-                    description={course.description || ""}
-                    oldPrice={getCoursePrice(course).oldPrice}
-                    price={getCoursePrice(course).price}
-                    url={`/courses/${course.url_slug}`}
-                  />
-
-                </div>
-
-              ))}
-
+              .map((course) => {
+                const isActive = coursesList.findIndex((c) => c.id === course.id) === selectedIndex;
+                return (
+                  <div
+                    key={course.id}
+                    onClick={() => handleCardClick(course)}
+                    className={`
+                      cursor-pointer
+                      transition-all duration-300
+                      hover:-translate-y-1
+                      hover:shadow-[0_12px_36px_rgba(101,87,227,0.22)]
+                      rounded-2xl
+                      ${isActive ? 'ring-2 ring-[#6557E3] shadow-[0_0_20px_rgba(101,87,227,0.3)]' : ''}
+                    `}
+                  >
+                    <CourseCard
+                      icon={getCourseIcon(course)}
+                      category={getCourseCategory(course)}
+                      categoryColor={getCourseCategoryColor(course)}
+                      title={getCourseTitle(course)}
+                      description={course.description || ""}
+                      oldPrice={getCoursePrice(course).oldPrice}
+                      price={getCoursePrice(course).price}
+                      url={`/courses/${course.url_slug}`}
+                    />
+                  </div>
+                );
+              })}
           </div>
 
           {/* BOTTOM CARDS */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:col-span-12'>
-
             {coursesList
               .filter((course) => course.id !== selectedCourse.id)
               .slice(3)
-              .map((course) => (
-
-                <div
-                  key={course.id}
-                  onClick={() => setSelectedCourse(course)}
-                  className='cursor-pointer transition-all duration-300 hover:-translate-y-1'
-                >
-
-                  <CourseCard
-                    icon={getCourseIcon(course)}
-                    category={getCourseCategory(course)}
-                    categoryColor={getCourseCategoryColor(course)}
-                    title={getCourseTitle(course)}
-                    description={course.description || ""}
-                    oldPrice={getCoursePrice(course).oldPrice}
-                    price={getCoursePrice(course).price}
-                    url={`/courses/${course.url_slug}`}
-                  />
-
-                </div>
-
-              ))}
-
+              .map((course) => {
+                const isActive = coursesList.findIndex((c) => c.id === course.id) === selectedIndex;
+                return (
+                  <div
+                    key={course.id}
+                    onClick={() => handleCardClick(course)}
+                    className={`
+                      cursor-pointer
+                      transition-all duration-300
+                      hover:-translate-y-1
+                      hover:shadow-[0_12px_36px_rgba(101,87,227,0.22)]
+                      rounded-2xl
+                      ${isActive ? 'ring-2 ring-[#6557E3] shadow-[0_0_20px_rgba(101,87,227,0.3)]' : ''}
+                    `}
+                  >
+                    <CourseCard
+                      icon={getCourseIcon(course)}
+                      category={getCourseCategory(course)}
+                      categoryColor={getCourseCategoryColor(course)}
+                      title={getCourseTitle(course)}
+                      description={course.description || ""}
+                      oldPrice={getCoursePrice(course).oldPrice}
+                      price={getCoursePrice(course).price}
+                      url={`/courses/${course.url_slug}`}
+                    />
+                  </div>
+                );
+              })}
           </div>
 
         </div>
 
         <div className='flex items-center justify-center mt-14 sm:mt-20'>
-
           <SecondaryButton
             text='View All Courses'
             bgColor='#6557E3'
             shadowColor='#3A1078'
             borderColor='#6557E3'
           />
-
         </div>
 
       </div>

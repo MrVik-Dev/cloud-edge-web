@@ -8,6 +8,7 @@ interface TestimonialCardProps {
   name: string;
   image: StaticImageData | string;
   rating: number;
+  person_designation?:string;
 }
 
 const TestimonialCard: React.FC<TestimonialCardProps> = ({
@@ -15,6 +16,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
   name,
   image,
   rating,
+  person_designation
 }) => {
   const safeRating = Math.max(0, Math.min(5, rating));
 
@@ -72,7 +74,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
       <div className="flex flex-col items-center gap-2">
         <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden border border-white/20">
           <Image
-            src={image}
+            src={image ? image : emptyStar}
             alt={name}
             fill
             className="object-cover"
@@ -82,6 +84,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
         <h4 className="text-white text-sm sm:text-lg font-semibold">
           {name}
         </h4>
+        <p  className="text-white text-sm ">{person_designation}</p>
       </div>
     </div>
   );

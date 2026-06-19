@@ -34,13 +34,13 @@ const CourseCard = ({
       }}
     >
       <div className='flex items-center justify-between'>
-        <Image
-          src={icon}
-          alt={title}
-          width={52}
-          height={52}
-          className='w-[52px] h-[52px] object-contain'
-        />
+<img
+  src={typeof icon === "string" ? icon : icon.src}
+  alt={title}
+  width={52}
+  height={52}
+  className='w-[52px] h-[52px] object-contain'
+/>
 
         <span
           className='text-xs uppercase bg-white p-1 rounded font-bold'
