@@ -108,7 +108,7 @@ const CourseHeroSection: React.FC<ICourseHeroSectionProps> = ({ course }) => {
 
                   <p className="text-sm font-semibold text-gray-900">
                     {/* @ts-ignore */}
-                    {moment(course.nextBatch.start_date).format("DD MMM YYYY")}
+                    {moment(course.nextBatch?.start_date).format("DD MMM YYYY")}
                   </p>
                 </div>
               </div>
