@@ -111,7 +111,7 @@ const TestimonialSection = () => {
                     comment={testimonial.review_text || testimonial.comment || ""}
                     name={testimonial.person_name || testimonial.name || ""}
                     rating={testimonial.rating || 5}
-                    image={testimonial.media_url.src || testimonial.image || janesmith}
+                    image={testimonial?.media_url || testimonial.image || janesmith}
                     person_designation={testimonial.person_designation || ""}
                   />
                 </div>
