@@ -90,7 +90,7 @@ const MobileNavbar: React.FC<MobileNavbarProps> = ({ navItems }) => {
           </nav>
 
           <div className="mt-5">
-            <PrimaryButton label="Contact Us" className="w-full!" />
+            <PrimaryButton href="/contact-us" label="Contact Us" className="w-full!" />
           </div>
         </div>
       </div>

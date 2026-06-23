@@ -210,14 +210,15 @@ const HeroSection = () => {
                             {slide.btn_text && (
                             <PrimaryButton
                                 label={slide.btn_text || "View Courses"}
-                                href={slide.btn_link || "/"}
+                                // href={slide.btn_link || "/courses"}
+                                href={"/courses"}
                                 className="md:px-8! md:py-4! text-sm! md:text-base! shadow-primary! shadow-lg! w-full sm:w-auto"
                             />
                             )}
 
                             {slide.secondaryBtn && (
                                 <Link
-                                    href="/"
+                                    href="/contact-us"
                                     className="
                         relative overflow-hidden
                         w-full sm:w-auto

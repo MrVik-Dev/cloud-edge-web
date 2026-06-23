@@ -13,7 +13,7 @@ const navItems = [
   { label: "Courses", href: "/courses", },
   {label: "About", href: "/about-us", },
   {label: "Contact", href: "/contact-us", },
-  // { label: "Services", href: "#services", hasDropdown: true },
+  { label: "Services", href: "/services", hasDropdown: false },
   { label: "Blogs", href: "/blogs", hasDropdown: false },
 ];
 
@@ -66,7 +66,7 @@ const Navbar = () => {
 
       {/* Button */}
       <div>
-        <PrimaryButton label="Contact Us" />
+        <PrimaryButton href="/contact-us" label="Contact Us" />
       </div>
     </div>
   );

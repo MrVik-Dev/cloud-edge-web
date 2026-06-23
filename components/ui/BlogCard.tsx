@@ -9,6 +9,7 @@ interface BlogCardProps {
   date: string;
   categoryBgColor?: string;
   categoryTextColor?: string;
+  href?: string;
 }
 
 const BlogCard = ({
@@ -18,6 +19,7 @@ const BlogCard = ({
   date,
   categoryBgColor = "#FCEAF3",
   categoryTextColor = "#FF4FA2",
+  href = "/blogs",
 }: BlogCardProps) => {
   return (
     <div
@@ -119,6 +121,7 @@ const BlogCard = ({
               text="Learn More"
               bgColor="#C591FB"
               shadowColor="#C591FB"
+              href={href}
             />
           </div>
         </div>

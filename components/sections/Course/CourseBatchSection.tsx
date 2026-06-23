@@ -5,6 +5,7 @@ import group from "@/public/icons/group-white.svg"
 import Image from 'next/image';
 import groupGreen from "@/public/icons/group-green.svg"
 import calendarBlue from "@/public/icons/calender-blue.svg"
+import { getWhatsAppLink } from '@/utils';
 
 
 interface ICourseBatchSectionProps {
@@ -240,9 +241,14 @@ const CourseBatchSection: React.FC<ICourseBatchSectionProps> = ({ batches, durat
                       </div>
                     </div>
 
-                    <button className="w-full mt-5 border border-[#6557E3] bg-[#E9EEFC] text-[#6557E3] rounded-full py-3 font-semibold text-sm transition-all hover:bg-[#6557E3] hover:text-white">
+                    <a
+                      href={getWhatsAppLink(`Hi Cloud Edge Solutions, I want to enroll for the ${batch.name} batch.`)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-center w-full mt-5 border border-[#6557E3] bg-[#E9EEFC] text-[#6557E3] rounded-full py-3 font-semibold text-sm transition-all hover:bg-[#6557E3] hover:text-white"
+                    >
                       Enroll for this batch →
-                    </button>
+                    </a>
                   </div>
                 );
               })}

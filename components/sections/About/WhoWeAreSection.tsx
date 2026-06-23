@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from "next/image";
+import Link from "next/link";
 import whoWeAreIcon from "@/public/icons/who-we-are-icon.svg"
 
 import liveSession from "@/public/icons/live-session.svg"
@@ -18,6 +19,7 @@ import canada from "@/public/icons/CA.svg"
 import uae from "@/public/icons/AE.svg"
 import whatsappIcon from "@/public/icons/whatsapp-icon.svg"
 import nextArrow from "@/public/icons/next-aroow.svg"
+import { getWhatsAppLink } from "@/utils";
 
 
 const features = [
@@ -234,7 +236,10 @@ const WhoWeAreSection = () => {
               <div className="flex flex-col gap-3 md:flex-row md:justify-center">
 
                 {/* WhatsApp Button */}
-                <button
+                <a
+                    href={getWhatsAppLink("Hi Cloud Edge Solutions, I would like to enroll.")}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="
         flex items-center justify-center gap-2
         rounded-full
@@ -253,10 +258,11 @@ const WhoWeAreSection = () => {
                       className="w-5 h-5"
                   />
                   WhatsApp to Enroll
-                </button>
+                </a>
 
                 {/* Browse Courses Button */}
-                <button
+                <Link
+                    href="/courses"
                     className="
         flex items-center justify-center gap-2
         rounded-full
@@ -275,7 +281,7 @@ const WhoWeAreSection = () => {
                       alt="next icon"
                       className="w-5 h-5"
                   />
-                </button>
+                </Link>
 
               </div>
             </div>

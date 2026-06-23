@@ -73,7 +73,7 @@ const NewsBlogSection = () => {
         </div>
 
         <div className=' flex items-center justify-center mt-14 sm:mt-20'>
-          <SecondaryButton text='View All Articles' bgColor='#6557E3' borderColor='#6557E3' shadowColor='#3A1078' href={"/courses"}/>
+          <SecondaryButton text='View All Articles' bgColor='#6557E3' borderColor='#6557E3' shadowColor='#3A1078' href={"/blogs"}/>
         </div>
       </div>
     </div>

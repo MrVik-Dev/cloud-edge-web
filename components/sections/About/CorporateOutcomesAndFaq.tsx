@@ -183,7 +183,7 @@ const CorporateOutcomesAndFaq = () => {
                     Everything You Need to Know
                   </h2>
                   <p className="text-sm text-[#64748B]">
-                    Still have questions? <a href="/contact" className="text-[#6557E3] font-semibold hover:underline">Contact
+                    Still have questions? <a href="/contact-us" className="text-[#6557E3] font-semibold hover:underline">Contact
                     us</a> directly.
                   </p>
                 </div>

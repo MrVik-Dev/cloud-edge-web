@@ -3,6 +3,7 @@ import Image from 'next/image'
 
 import lightIcon from "@/public/icons/light-icon.svg"
 import cta from "@/public/images/cta.svg"
+import { getWhatsAppLink } from '@/utils'
 
 const CourseCtaSection = () => {
   return (
@@ -42,7 +43,10 @@ const CourseCtaSection = () => {
               high-demand career.
             </p>
 
-            <button
+            <a
+              href={getWhatsAppLink("Hi Cloud Edge Solutions, I am ready to start learning.")}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-7 flex h-14 items-center gap-3 rounded-xl bg-white px-8 text-sm font-semibold text-[#0F172A] transition-all hover:scale-[1.02]"
               style={{
                 boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
@@ -50,7 +54,7 @@ const CourseCtaSection = () => {
             >
               Start Learning Today
               <span>→</span>
-            </button>
+            </a>
 
             <p className="mt-4 text-sm text-white/60">
               7-Day Free Trial • Cancel Anytime

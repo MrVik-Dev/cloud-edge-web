@@ -3,6 +3,7 @@ import React from 'react'
 import moment from 'moment';
 import cap from "@/public/icons/cap.svg"
 import Image from 'next/image';
+import { getEmailLink, getWhatsAppLink } from '@/utils';
 import calendarBlue from "@/public/icons/calendar-blue.svg"
 import groupIcon from "@/public/icons/group.svg"
 import calendarOrange from "@/public/icons/calendar-orange.svg"
@@ -18,6 +19,12 @@ interface ICourseHeroSectionProps {
 }
 
 const CourseHeroSection: React.FC<ICourseHeroSectionProps> = ({ course }) => {
+  const whatsappLink = getWhatsAppLink(`Hi Cloud Edge Solutions, I want to enroll in ${course.name}.`);
+  const demoLink = getEmailLink(
+    `Free Demo Class Request - ${course.name}`,
+    `Hi Cloud Edge Solutions,\n\nI would like to book a free demo class for ${course.name}.`
+  );
+
   return (
       <div
   className="min-h-[900px] pb-12 md:pb-0"
@@ -177,7 +184,12 @@ const CourseHeroSection: React.FC<ICourseHeroSectionProps> = ({ course }) => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
 
-              <button className="bg-[#4361EE] px-6 py-4 rounded-full flex items-center justify-center gap-2 w-full sm:w-auto">
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#4361EE] px-6 py-4 rounded-full flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
                 <Image
                   src={whatsappIcon}
                   alt="whatsapp"
@@ -186,9 +198,12 @@ const CourseHeroSection: React.FC<ICourseHeroSectionProps> = ({ course }) => {
                 <div className="text-white font-semibold">
                   Enroll via WhatsApp
                 </div>
-              </button>
+              </a>
 
-              <button className="bg-white px-6 py-4 rounded-full flex items-center justify-center gap-2 border border-[#F3F4F6] w-full sm:w-auto">
+              <a
+                href={demoLink}
+                className="bg-white px-6 py-4 rounded-full flex items-center justify-center gap-2 border border-[#F3F4F6] w-full sm:w-auto"
+              >
                 <Image
                   src={play}
                   alt="play"
@@ -197,7 +212,7 @@ const CourseHeroSection: React.FC<ICourseHeroSectionProps> = ({ course }) => {
                 <div className="text-black font-semibold">
                   Book a Free Demo
                 </div>
-              </button>
+              </a>
             </div>
 
             {/* Features */}

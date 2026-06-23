@@ -13,6 +13,7 @@ import facebook from "@/public/icons/facebook.svg"
 import whatsapp from "@/public/icons/whatsapp.svg"
 import { usePathname } from "next/navigation";
 import heartIcon from "@/public/icons/heart.svg"
+import { getWhatsAppLink } from "@/utils";
 
 import {
   ArrowRight,
@@ -117,17 +118,21 @@ const Footer = () => {
 
                   <div className="flex items-center gap-3">
                     {[
-                      <Image src={insta} alt="Instagram" className=" w-6 h-6" />,
-                      <Image src={linkedin} alt="Linkedin" className=" w-6 h-6" />,
-                      <Image src={facebook} alt="Facebook" className=" w-6 h-6" />,
-                      <Image src={whatsapp} alt="Whatsapp" className=" w-6 h-6" />,
-                    ].map((icon, index) => (
-                      <button
-                        key={index}
+                      { label: "Instagram", href: "/contact-us", icon: <Image src={insta} alt="Instagram" className=" w-6 h-6" /> },
+                      { label: "Linkedin", href: "/contact-us", icon: <Image src={linkedin} alt="Linkedin" className=" w-6 h-6" /> },
+                      { label: "Facebook", href: "/contact-us", icon: <Image src={facebook} alt="Facebook" className=" w-6 h-6" /> },
+                      { label: "Whatsapp", href: getWhatsAppLink(), icon: <Image src={whatsapp} alt="Whatsapp" className=" w-6 h-6" />, external: true },
+                    ].map((item) => (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        target={item.external ? "_blank" : undefined}
+                        rel={item.external ? "noopener noreferrer" : undefined}
+                        aria-label={item.label}
                         className="h-12 w-12 rounded-[14px] border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center text-white/90 hover:bg-white/10 transition-all"
                       >
-                        {icon}
-                      </button>
+                        {item.icon}
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -142,7 +147,7 @@ const Footer = () => {
                     { label: "Home", href: "/" },
                     { label: "Courses", href: "/courses" },
                     { label: "Services", href: "/services" },
-                    { label: "Blog", href: "/blog" },
+                    { label: "Blog", href: "/blogs" },
                     { label: "Contact", href: "/contact-us" },
                   ].map((item) => {
                     const isActive = pathname === item.href;
@@ -174,31 +179,31 @@ const Footer = () => {
 
                 <ul className="space-y-4 text-sm text-white">
                   <li>
-                    <Link href="/" className="hover:text-white">
+                    <Link href="/about-us" className="hover:text-white">
                       Customers
                     </Link>
                   </li>
 
                   <li>
-                    <Link href="/" className="hover:text-white">
+                    <Link href="/services" className="hover:text-white">
                       Pricing
                     </Link>
                   </li>
 
                   <li>
-                    <Link href="/" className="hover:text-white">
+                    <Link href="/blogs" className="hover:text-white">
                       Learning Center
                     </Link>
                   </li>
 
                   <li>
-                    <Link href="/" className="hover:text-white">
+                    <Link href="/contact-us" className="hover:text-white">
                       Help desk
                     </Link>
                   </li>
 
                   <li>
-                    <Link href="/" className="hover:text-white">
+                    <Link href="/contact-us" className="hover:text-white">
                       Terms & Conditions
                     </Link>
                   </li>

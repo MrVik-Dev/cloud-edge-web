@@ -38,6 +38,7 @@ const CtaSection = () => {
                   text="Enroll Now"
                   bgColor="#6557E3"
                   shadowColor="#3A2FA0"
+                  href="/courses"
                 />
               </div>
             </div>

@@ -62,7 +62,7 @@ const ContactUsSection = () => {
               <AForm onSubmit={onSubmit}>
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
 
-                  <div>
+                  <div key={'first_name'}>
                     <AFormInput
                       name='first_name'
                       type='text'
@@ -73,7 +73,7 @@ const ContactUsSection = () => {
                     />
                   </div>
 
-                  <div>
+                  <div key={'last_name'}>
                     <AFormInput
                       name='last_name'
                       type='text'
@@ -84,7 +84,7 @@ const ContactUsSection = () => {
                     />
                   </div>
 
-                  <div>
+                  <div key={'email'}>
                     <AFormInput
                       name='email'
                       type='text'
@@ -95,7 +95,7 @@ const ContactUsSection = () => {
                     />
                   </div>
 
-                  <div>
+                  <div key={'phone_number'}>
                     <AFormInput
                       name='phone_number'
                       type='text'
@@ -106,7 +106,7 @@ const ContactUsSection = () => {
                     />
                   </div>
 
-                  <div className='sm:col-span-2'>
+                  <div className='sm:col-span-2' key={'city'}>
                     <AFormInput
                       name='city'
                       type='text'
@@ -117,7 +117,7 @@ const ContactUsSection = () => {
                     />
                   </div>
 
-                  <div className='sm:col-span-2'>
+                  <div className='sm:col-span-2' key={'message'}>
                     <AFormInput
                       name='message'
                       type='textarea'
@@ -127,7 +127,7 @@ const ContactUsSection = () => {
                     />
                   </div>
 
-                  <div className='sm:col-span-2'>
+                  <div className='sm:col-span-2' key={'newsletter'}>
                     <AFormInput
                       name='newsletter'
                       type='checkbox'

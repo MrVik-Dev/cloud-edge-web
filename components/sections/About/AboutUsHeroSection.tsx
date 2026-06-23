@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from "next/image";
+import Link from "next/link";
 import aboutUsImage from "@/public/images/about-us.png";
 import whatsappIcon from "@/public/icons/whats-app.svg";
 import play from "@/public/icons/play.svg";
@@ -8,6 +9,7 @@ import foundedIcon from "@/public/icons/foundedIcon.svg"
 import locationIcon from "@/public/icons/locationIcon.svg"
 import countriesIcon from "@/public/icons/countriesIcon.svg"
 import cpdIcon from "@/public/icons/cpdIcon.svg"
+import { getWhatsAppLink } from "@/utils";
 
 
 const AboutUsHeroSection = () => {
@@ -42,7 +44,8 @@ const AboutUsHeroSection = () => {
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
 
-                <button
+                <Link
+                    href="/courses"
                     className="bg-[#4361EE] px-6 py-4 rounded-full flex items-center justify-center gap-3 w-full sm:w-auto">
                   <div className="text-white font-semibold">
                     Browse All Courses
@@ -52,9 +55,12 @@ const AboutUsHeroSection = () => {
                       alt="next arrow"
                       className="w-5 h-5"
                   />
-                </button>
+                </Link>
 
-                <button
+                <a
+                    href={getWhatsAppLink("Hi Cloud Edge Solutions, I would like to talk to an advisor.")}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="bg-white px-6 py-4 rounded-full flex items-center justify-center gap-2 border border-[#F3F4F6] w-full sm:w-auto">
                   <Image
                       src={whatsappIcon}
@@ -64,7 +70,7 @@ const AboutUsHeroSection = () => {
                   <div className="text-[#25D366] font-semibold">
                     Talk to an Advisor
                   </div>
-                </button>
+                </a>
               </div>
             </div>
 

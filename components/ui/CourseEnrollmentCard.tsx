@@ -13,6 +13,7 @@ import whatsappIcon from "@/public/icons/whatsapp-icon.svg"
 import emailIcon from "@/public/icons/email-icon.svg"
 import playIcon from "@/public/icons/play-icon.svg"
 import moment from "moment";
+import { getEmailLink, getWhatsAppLink } from "@/utils";
 
 const flags = { IN: india, UK: uk, US: us, CA: canada };
 const flagLabels = { IN: "India", UK: "UK", US: "USA", CA: "Canada" };
@@ -38,6 +39,15 @@ export default function CourseEnrollmentCard({ course }: { course: any }) {
   const timezone = nextBatch?.timezone ?? nextBatch?.batch?.timezone ?? "";
   const paymentModes = course.payment_modes ?? "UPI · NET · Card";
   const phone = course.contact_phone ?? "";
+  const whatsappLink = getWhatsAppLink(`Hi Cloud Edge Solutions, I want to enroll in ${course.name}.`);
+  const emailLink = getEmailLink(
+    `Course Enquiry - ${course.name}`,
+    `Hi Cloud Edge Solutions,\n\nI would like to enroll in ${course.name}.`
+  );
+  const demoLink = getEmailLink(
+    `Free Demo Class Request - ${course.name}`,
+    `Hi Cloud Edge Solutions,\n\nI would like to book a free demo class for ${course.name}.`
+  );
 
   return (
     <div className="overflow-hidden rounded-[24px] border border-[#E2E8F0] bg-white shadow-sm">
@@ -177,16 +187,27 @@ export default function CourseEnrollmentCard({ course }: { course: any }) {
 
         {/* Buttons */}
         <div className=" space-y-3 mt-10">
-          <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#22C55E] py-4 font-semibold text-white">
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center gap-2 rounded-full bg-[#22C55E] py-4 font-semibold text-white"
+          >
            <Image src={whatsappIcon} alt="whatsapp" className=" w-5 h-5" /> WhatsApp to Enroll
-          </button>
-          <button className="w-full flex items-center justify-center gap-2 rounded-full bg-[#6366F1] py-4 font-semibold text-white">
+          </a>
+          <a
+            href={emailLink}
+            className="w-full flex items-center justify-center gap-2 rounded-full bg-[#6366F1] py-4 font-semibold text-white"
+          >
             <Image src={emailIcon} alt="email" className=" w-5 h-5" /> Enroll by Email
-          </button>
-          <button className="w-full rounded-full border border-slate-200 py-4 font-semibold text-slate-700 flex items-center justify-center gap-2">
+          </a>
+          <a
+            href={demoLink}
+            className="w-full rounded-full border border-slate-200 py-4 font-semibold text-slate-700 flex items-center justify-center gap-2"
+          >
             <Image src={playIcon} alt="play" className=" w-5 h-5" /> 
             Book a Free Demo Class
-          </button>
+          </a>
         </div>
 
           <p className="mt-5 text-center text-sm text-slate-500 font-semibold">

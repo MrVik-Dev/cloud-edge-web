@@ -700,6 +700,7 @@ const ExploreCoursesSection = () => {
             bgColor='#6557E3'
             shadowColor='#3A1078'
             borderColor='#6557E3'
+            href="/courses"
           />
         </div>
 
