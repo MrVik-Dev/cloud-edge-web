@@ -12,11 +12,11 @@ export const blogColumnns = (
     onDelete: (blog: IBlogs) => void
 ): ColumnDef<IBlogs>[] => [
     {
-        accessorKey: "media_url",
+        accessorKey: "cover_image_url",
         header: "Media",
         cell: ({ row }) => (
             <Image
-                src={row.original.media_url ?? ""}
+                src={row.original.cover_image_url || row.original.media_url || "/images/blog-placeholder.png"}
                 alt={row.original.title ?? ""}
                 width={80}
                 height={48}

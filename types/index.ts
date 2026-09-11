@@ -122,6 +122,7 @@ export interface IBlogs {
   description?: string
   url_slug?: string
   media_url?: string
+  cover_image_url?: string
   tags?: string[]
   created_at?: Date
   author_name?: string

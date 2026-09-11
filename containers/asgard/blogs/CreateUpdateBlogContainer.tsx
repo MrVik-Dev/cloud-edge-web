@@ -1,6 +1,7 @@
 "use client";
 
 import React, {
+    useEffect,
     useRef,
     useState,
 } from "react";
@@ -30,6 +31,7 @@ export interface IBlog {
     title?: string;
     description?: string;
     media_url?: string;
+    cover_image_url?: string;
     is_active?: boolean;
     tags?: string[];
 }
@@ -49,12 +51,20 @@ const CreateUpdateBlogContainer = ({
     const [loading, setLoading] =
         useState(false);
 
-    const [file, setFile] =
+    const [bannerFile, setBannerFile] =
         useState<File | null>(null);
 
-    const [preview, setPreview] =
+    const [bannerPreview, setBannerPreview] =
         useState(
             data?.media_url || ""
+        );
+
+    const [coverFile, setCoverFile] =
+        useState<File | null>(null);
+
+    const [coverPreview, setCoverPreview] =
+        useState(
+            data?.cover_image_url || ""
         );
 
     const [tagInput, setTagInput] = useState("");
@@ -68,7 +78,20 @@ const CreateUpdateBlogContainer = ({
         tags: data?.tags ?? [],
     });
 
-    const handleImageUpload = (
+    useEffect(() => {
+        if (data) {
+            setBannerPreview(data.media_url || "");
+            setCoverPreview(data.cover_image_url || "");
+            setForm({
+                title: data.title ?? "",
+                description: data.description ?? "",
+                is_active: data.is_active ?? true,
+                tags: data.tags ?? [],
+            });
+        }
+    }, [data]);
+
+    const handleBannerUpload = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         const selectedFile =
@@ -76,9 +99,26 @@ const CreateUpdateBlogContainer = ({
 
         if (!selectedFile) return;
 
-        setFile(selectedFile);
+        setBannerFile(selectedFile);
 
-        setPreview(
+        setBannerPreview(
+            URL.createObjectURL(
+                selectedFile
+            )
+        );
+    };
+
+    const handleCoverUpload = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const selectedFile =
+            e.target.files?.[0];
+
+        if (!selectedFile) return;
+
+        setCoverFile(selectedFile);
+
+        setCoverPreview(
             URL.createObjectURL(
                 selectedFile
             )
@@ -119,13 +159,25 @@ const CreateUpdateBlogContainer = ({
             let mediaUrl =
                 data?.media_url || "";
 
-            if (file) {
+            if (bannerFile) {
                 const uploaded = await uploadMedia({
-                    file,
+                    file: bannerFile,
                     folder: "blogs",
                 });
 
                 mediaUrl = uploaded.url;
+            }
+
+            let coverImageUrl =
+                data?.cover_image_url || "";
+
+            if (coverFile) {
+                const uploaded = await uploadMedia({
+                    file: coverFile,
+                    folder: "blogs",
+                });
+
+                coverImageUrl = uploaded.url;
             }
 
             const description =
@@ -135,6 +187,7 @@ const CreateUpdateBlogContainer = ({
                 title: form.title,
                 description,
                 media_url: mediaUrl,
+                cover_image_url: coverImageUrl,
                 is_active:
                 form.is_active,
                 tags: form.tags,
@@ -312,55 +365,107 @@ const CreateUpdateBlogContainer = ({
                         </div>
                     </div>
 
-                    <div className="mt-6 space-y-2">
-                        <Label>
-                            Featured Image
-                        </Label>
+                    <div className="mt-6 grid gap-6 lg:grid-cols-2">
+                        <div className="space-y-2">
+                            <Label>
+                                Banner Image
+                            </Label>
 
-                        <label
-                            htmlFor="blog-upload"
-                            className="group flex min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-muted-foreground/20 bg-muted/20 p-8 text-center transition-all hover:border-primary/40 hover:bg-muted/40"
-                        >
-                            <Upload
-                                className="mb-3 h-8 w-8 text-muted-foreground transition-transform group-hover:scale-110"/>
+                            <label
+                                htmlFor="blog-banner-upload"
+                                className="group flex min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-muted-foreground/20 bg-muted/20 p-8 text-center transition-all hover:border-primary/40 hover:bg-muted/40"
+                            >
+                                <Upload
+                                    className="mb-3 h-8 w-8 text-muted-foreground transition-transform group-hover:scale-110"/>
 
-                            <p className="font-medium">
-                                {file
-                                    ? "Change Featured Image"
-                                    : "Upload Featured Image"}
-                            </p>
-
-                            <p className="mt-1 text-sm text-muted-foreground">
-                                PNG, JPG, WEBP
-                            </p>
-
-                            {file && (
-                                <p className="mt-3 text-xs font-medium text-primary">
-                                    {file.name}
+                                <p className="font-medium">
+                                    {bannerFile || bannerPreview
+                                        ? "Change Banner Image"
+                                        : "Upload Banner Image"}
                                 </p>
+
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                    PNG, JPG, WEBP
+                                </p>
+
+                                {bannerFile && (
+                                    <p className="mt-3 text-xs font-medium text-primary">
+                                        {bannerFile.name}
+                                    </p>
+                                )}
+
+                                <input
+                                    id="blog-banner-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleBannerUpload}
+                                />
+                            </label>
+
+                            {bannerPreview && (
+                                <div className="mt-4 overflow-hidden rounded-xl border">
+                                    <Image
+                                        src={bannerPreview}
+                                        alt="Banner Preview"
+                                        width={1200}
+                                        height={630}
+                                        className="h-[250px] w-full object-cover"
+                                    />
+                                </div>
                             )}
-
-                            <input
-                                id="blog-upload"
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                                onChange={handleImageUpload}
-                            />
-                        </label>
-                    </div>
-
-                    {preview && (
-                        <div className="mt-4 overflow-hidden rounded-xl border">
-                            <Image
-                                src={preview}
-                                alt="Blog Preview"
-                                width={1200}
-                                height={630}
-                                className="h-[350px] w-full object-cover"
-                            />
                         </div>
-                    )}
+
+                        <div className="space-y-2">
+                            <Label>
+                                Cover Image
+                            </Label>
+
+                            <label
+                                htmlFor="blog-cover-upload"
+                                className="group flex min-h-[220px] cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-muted-foreground/20 bg-muted/20 p-8 text-center transition-all hover:border-primary/40 hover:bg-muted/40"
+                            >
+                                <Upload
+                                    className="mb-3 h-8 w-8 text-muted-foreground transition-transform group-hover:scale-110"/>
+
+                                <p className="font-medium">
+                                    {coverFile || coverPreview
+                                        ? "Change Cover Image"
+                                        : "Upload Cover Image"}
+                                </p>
+
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                    PNG, JPG, WEBP
+                                </p>
+
+                                {coverFile && (
+                                    <p className="mt-3 text-xs font-medium text-primary">
+                                        {coverFile.name}
+                                    </p>
+                                )}
+
+                                <input
+                                    id="blog-cover-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleCoverUpload}
+                                />
+                            </label>
+
+                            {coverPreview && (
+                                <div className="mt-4 overflow-hidden rounded-xl border">
+                                    <Image
+                                        src={coverPreview}
+                                        alt="Cover Preview"
+                                        width={1200}
+                                        height={630}
+                                        className="h-[250px] w-full object-cover"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="rounded-2xl border bg-card p-6 shadow-sm">

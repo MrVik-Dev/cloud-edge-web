@@ -148,7 +148,13 @@ const BlogWithSidebar: React.FC<IProps> = ({ blogs: blogData }) => {
                 className="cursor-pointer relative sm:w-2/5 min-h-[220px] sm:min-h-[280px] overflow-hidden shrink-0 bg-slate-100"
               >
                 <ResilientImage
-                  src={post?.media_url && post.media_url.trim() !== "" ? post.media_url : placeholder}
+                  src={
+                    post?.cover_image_url && post.cover_image_url.trim() !== ""
+                      ? post.cover_image_url
+                      : post?.media_url && post.media_url.trim() !== ""
+                      ? post.media_url
+                      : placeholder
+                  }
                   fallbackSrc={placeholder}
                   alt={post.title || "Cloud Edge Article"}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
